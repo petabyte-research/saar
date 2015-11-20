@@ -109,11 +109,8 @@ public class Saar extends SimState
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected
 		Bag neighbours = new Bag();
 		
-		System.out.print("Creating social network Wats ...  "); 
-
 		for (int i = 0 ; i < citizens.size() ; i++  )
 		{
-			System.out.print("* ");
 			Object citizen = citizens.get(i);
 			Double2D pos = area.getObjectLocation(citizen);
 			
@@ -125,8 +122,9 @@ public class Saar extends SimState
 			for ( int n = 0; n < neighbours.size() ; n++ )
 			{
 				Object neighbour = neighbours.get(n);
-				/*if ( random.nextDouble() < beta ) 
+				if ( random.nextDouble() < beta ) 
 				{
+					System.out.print(" !!! hit beta ...  "); 
 					// wire with random node with probability beta
 					// TODO: this is not entirely correct; a node has to be randomly selected from a set without already wired nodes and neighbour
 					do {
@@ -137,11 +135,11 @@ public class Saar extends SimState
 					friends.addEdge(citizen,acquaintance,1.0);
 				} 
 				else
-				{*/
+				{
 					// otherwise, just wire neighbour (if not wired already) 
 					if ( friends.getEdge(citizen, neighbour) == null )
 						friends.addEdge(citizen,neighbour,1.0);
-			//	}
+				}
 			
 			}
 		}
