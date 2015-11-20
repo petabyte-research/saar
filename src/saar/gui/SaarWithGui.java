@@ -3,6 +3,7 @@ package saar.gui;
 
 import sim.engine.*;
 import sim.display.*;
+import sim.portrayal.network.*;
 import sim.portrayal.continuous.*;
 import sim.portrayal.simple.*;
 import javax.swing.*;
@@ -15,6 +16,7 @@ public class SaarWithGui extends GUIState {
 	public Display2D display;
 	public JFrame displayFrame;
 	ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
+	NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();
 	
 		public static void main(String[] args)
 		{
@@ -53,7 +55,11 @@ public class SaarWithGui extends GUIState {
 			// tell the portrayals what to portray and how to portray them
 			yardPortrayal.setField( saar.area );
 			yardPortrayal.setPortrayalForAll(new OvalPortrayal2D());
-			// reschedule the displayer
+			
+			buddiesPortrayal.setField( new SpatialNetwork2D( saar.area, saar.friends ) );
+			buddiesPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
+
+					// reschedule the displayer
 			display.reset();
 			display.setBackdrop(Color.white);
 			// redraw the display
@@ -69,6 +75,7 @@ public class SaarWithGui extends GUIState {
 			displayFrame.setTitle("Saar Display");
 			c.registerFrame(displayFrame); // so the frame appears in the "Display" list
 			displayFrame.setVisible(true);
+			display.attach( buddiesPortrayal, "Buddies" );
 			display.attach( yardPortrayal, "Area" );
 		}
 		

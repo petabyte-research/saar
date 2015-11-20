@@ -16,8 +16,7 @@ import saar.agents.*;
 
 public class Saar extends SimState
 {
-	
-	
+		
 	public Continuous2D area = new Continuous2D(1.0,100,100);
 	public int numCitizens = 1000;
 	public Network friends = new Network(false);
@@ -42,12 +41,23 @@ public class Saar extends SimState
 		area.clear();
 
 		// add citizens
+		int xPos = 1;
+		int yPos = 0;
+		
 		for(int i = 0; i < numCitizens; i++)
 		{
 			Citizen citizen = new Citizen();
 			
-			area.setObjectLocation(citizen, new Double2D(area.getWidth() * 0.5 + random.nextDouble() - 0.5, area.getHeight() * 0.5 + random.nextDouble() - 0.5));
-			
+			// spread citizens over the area
+			area.setObjectLocation(citizen, new Double2D(xPos, yPos));
+			if ( xPos < 101 ) 
+				xPos = xPos + 3;
+			else {
+				xPos = 0;
+				yPos = yPos + 3;
+			}
+							
+				
 			// add citizen to social network and schedule 
 			friends.addNode(citizen);
 			schedule.scheduleRepeating(citizen);
