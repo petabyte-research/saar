@@ -18,7 +18,7 @@ public class Saar extends SimState
 {
 		
 	public Continuous2D area = new Continuous2D(1.0,100,100);
-	public int numCitizens = 1000;
+	public int numCitizens = 16;
 	public Network friends = new Network(false);
 	
 	/**
@@ -46,15 +46,15 @@ public class Saar extends SimState
 		
 		for(int i = 0; i < numCitizens; i++)
 		{
-			Citizen citizen = new Citizen();
+			Citizen citizen = new Citizen(i);
 			
 			// spread citizens over the area
 			
-			if ( xPos < 100 ) 
-				xPos = xPos + 3;
+			if ( xPos < 40 ) 
+				xPos = xPos + 10;
 			else {
 				xPos = 0;
-				yPos = yPos + 3;
+				yPos = yPos + 10;
 			}
 			area.setObjectLocation(citizen, new Double2D(xPos, yPos));				
 				
@@ -62,7 +62,6 @@ public class Saar extends SimState
 			friends.addNode(citizen);
 			schedule.scheduleRepeating(citizen);
 		}
-		
 		
 		// create edges in social network
 		
@@ -73,7 +72,7 @@ public class Saar extends SimState
 				createNetworkLattice();
 				break;
 			case "WattsBeta":
-				createNetworkWattsStrogatz(8, 0.25);
+				createNetworkWattsStrogatz(4, 0.5);
 				break;
 			default:
 				// TODO: add default social network
@@ -124,7 +123,6 @@ public class Saar extends SimState
 				Object neighbour = neighbours.get(n);
 				if ( random.nextDouble() < beta ) 
 				{
-					System.out.print(" !!! hit beta ...  "); 
 					// wire with random node with probability beta
 					// TODO: this is not entirely correct; a node has to be randomly selected from a set without already wired nodes and neighbour
 					do {
@@ -132,6 +130,7 @@ public class Saar extends SimState
 						acquaintance = citizens.get(tmp);
 					}
 					while ( citizen == acquaintance || neighbour == acquaintance || friends.getEdge(citizen, acquaintance) == null );
+					
 					friends.addEdge(citizen,acquaintance,1.0);
 				} 
 				else
@@ -146,6 +145,24 @@ public class Saar extends SimState
 		
 	}
 	
+	/**
+	 * 
+	 * @param ID
+	 * @return
+	 */
+	
+	public Object getAgent(int ID)
+	{
+		// TODO: for speed, maybe create a separate map to look up agents by ID
+
+		Bag individuals = friends.getAllNodes();
+		for ( int i = 1; i < individuals.size() ; i++ )
+		{
+			if ( ((Citizen) individuals.get(i)).getAgentID() == ID )
+				return individuals.get(i);
+		}
+		return null;
+	}
 
 	/**
 	 * @param args
