@@ -3,6 +3,7 @@
  */
 package saar;
 
+import saar.agents.Citizen;
 import sim.util.*;
 
 
@@ -12,67 +13,27 @@ import sim.util.*;
  */
 public class Message {
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Properties and constructors
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
 	private int messageID;
 	private int sender;
-	private IntBag receivers;
+	private Bag receivers;
 	private String performative;
 	private Bag content;
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public IntBag getReceivers() {
-		return receivers;
-	}
+	public Bag getReceivers() {	return receivers;}
+	public void setReceivers(Bag receivers) {	this.receivers = receivers;	}
+	public Bag getContent() {	return content;	}
+	public void setContent(Bag content) { this.content = content;}
+	public int getMessageID() {	return messageID;}
+	public int getSender() {	return sender;	}
+	public String getPerformative() {return performative;}
 	
-	/**
-	 * 
-	 * @param receivers
-	 */
-	public void setReceivers(IntBag receivers) {
-		this.receivers = receivers;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Bag getContent() {
-		return content;
-	}
-	
-	/**
-	 * 
-	 * @param content
-	 */
-	public void setContent(Bag content) {
-		this.content = content;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public int getMessageID() {
-		return messageID;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public int getSender() {
-		return sender;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getPerformative() {
-		return performative;
-	}
 	
 	/**
 	 * 
@@ -82,10 +43,28 @@ public class Message {
 	{
 		sender = newSender;
 		performative = newPerformative;
-		receivers = new IntBag();
+		receivers = new Bag();
 		content = new Bag();
 		
 		// TODO: determine message ID
+		
+	}
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Methods
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	/**
+	 * 
+	 * @param newCitizen
+	 */
+	
+	public void addReceiver(Citizen newCitizen)
+	{
+		receivers.add(newCitizen);
 		
 	}
 	
