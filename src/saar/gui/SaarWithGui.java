@@ -17,12 +17,15 @@ public class SaarWithGui extends GUIState {
 	public JFrame displayFrame;
 	ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
 	NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();
+	public JButton messageButton;
+	
 	
 		public static void main(String[] args)
 		{
 			SaarWithGui vid = new SaarWithGui();
 			Console c = new Console(vid);
 			c.setVisible(true);
+		
 		}
 		
 		public SaarWithGui() { 
@@ -31,7 +34,11 @@ public class SaarWithGui extends GUIState {
 		
 		public SaarWithGui(SimState state) { 
 			super(state); 
+
 		}
+		
+		// allow the user to inspect the model
+	    public Object getSimulationInspectedObject() { return state; }  // non-volatile
 		
 		public static String getName() { 
 			return "Social Amplification and Attenuation of Risk"; 
@@ -41,6 +48,7 @@ public class SaarWithGui extends GUIState {
 		{
 			super.start();
 			setupPortrayals();
+		
 		}
 		
 		public void load(SimState state)
@@ -77,6 +85,10 @@ public class SaarWithGui extends GUIState {
 			displayFrame.setVisible(true);
 			display.attach( buddiesPortrayal, "Buddies" );
 			display.attach( yardPortrayal, "Area" );
+			
+			messageButton = new JButton("Message");
+			messageButton.setVisible(true);
+			
 		}
 		
 		
@@ -87,6 +99,6 @@ public class SaarWithGui extends GUIState {
 			displayFrame = null;
 			display = null;
 		}
-
 		
+	
 }
