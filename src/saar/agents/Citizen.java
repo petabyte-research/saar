@@ -10,6 +10,7 @@ import sim.engine.*;
 import sim.field.continuous.*;
 import sim.field.network.*;
 import sim.util.*;
+import ec.util.*;
 import saar.Saar;
 import saar.Message;
 
@@ -21,19 +22,24 @@ public class Citizen implements Steppable {
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	private int HIGHER = 0;
+	private int EQUAL = 1;
+	private int LOWER = 2; 
+	
 	private int agentID;
 	private Saar model;
 	private Bag incomingQueue ;
 	private Bag outgoingQueue ; 
 	private Double riskPerception ;
 	private DoubleBag riskSignal;
+	private IntBag rpTotals;
 	
 	public Bag getIncomingQueue() { return incomingQueue;}
 	public void setIncomingQueue(Bag incomingQueue) {this.incomingQueue = incomingQueue;}
 	public Bag getOutgoingQueue() {return outgoingQueue;}
 	public void setOutgoingQueue(Bag outgoingQueue) {this.outgoingQueue = outgoingQueue;}
 	public Double getRiskPerception() {return riskPerception;}
-	//public void setRiskPerception(Double riskPerception) {this.riskPerception = riskPerception;}
+	public void setRiskPerception(Double riskPerception) {this.riskPerception = riskPerception;}
 	public int getAgentID()	{return agentID;}
 	
 	/**
@@ -42,12 +48,34 @@ public class Citizen implements Steppable {
 	public Citizen(int id) {
 		
 		agentID = id;
+		riskPerception = 0.0;
+		initCitizen();
+	}
+	
+	/**
+	 * 
+	 */
+	public Citizen(int id, Double initialRP)
+	{
+		agentID = id;
+		riskPerception = initialRP;
+		initCitizen();
+	}
+	
+	/**
+	 * 
+	 */
+	
+	private void initCitizen()
+	{
 		incomingQueue = new Bag();
 		outgoingQueue = new Bag(); 
-		riskPerception = 0.0;
 		riskSignal = new DoubleBag();
-
+		rpTotals = new IntBag(3);
+		for ( int i = 0 ; i < 3 ; i++ )
+			rpTotals.add(1);
 	}
+	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -137,16 +165,43 @@ public class Citizen implements Steppable {
 		
 	public void perceiveRisk()
 	{
-		
+		int riskSignalSize = riskSignal.size();
+		if ( riskSignalSize != 0 ) 
+		{ 
+			// select risk perception of random neighbour
+			Double tmpRiskPerception = riskSignal.get(model.randomGenerator.nextInt(riskSignal.size() ) );
+				
+			// change risk perception with probability based on occurens of lower and higher risk perception
+			int rpTotal = rpTotals.get(HIGHER) + rpTotals.get(EQUAL) + rpTotals.get(LOWER);
+			
+			if ( tmpRiskPerception > riskPerception ) {
+				if ( model.randomGenerator.nextDouble() < rpTotals.get(HIGHER) / rpTotal ) 
+					riskPerception = tmpRiskPerception; 
+				rpTotals.setValue(HIGHER, (int) rpTotals.getValue(HIGHER) +1 );
+			}
+			
+			if ( tmpRiskPerception == riskPerception ) {
+				if ( model.randomGenerator.nextDouble() < rpTotals.get(EQUAL) / rpTotal ) 
+					riskPerception = tmpRiskPerception; 
+				rpTotals.setValue(EQUAL, (int) rpTotals.getValue(EQUAL) +1 );
+			}
+			
+			if ( tmpRiskPerception < riskPerception ) {
+				if ( model.randomGenerator.nextDouble() < rpTotals.get(LOWER) / rpTotal ) 
+					riskPerception = tmpRiskPerception; 
+				rpTotals.setValue(LOWER, (int) rpTotals.getValue(LOWER) +1 );
+			}
+		}
+			
 		
 	}
 	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-	// Auxiliary 
-	//
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Auxiliary 
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * 
 	 * @param message
