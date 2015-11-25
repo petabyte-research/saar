@@ -9,6 +9,7 @@ package saar;
  */
 import sim.engine.*;
 import sim.util.*;
+import ec.util.*;
 import sim.field.continuous.*;
 import sim.field.network.*;
 import saar.agents.*;
@@ -16,65 +17,36 @@ import saar.agents.*;
 
 public class Saar extends SimState
 {
-		
-	public Continuous2D area = new Continuous2D(1.0,100,100);
-	public int numCitizens = 16;
-	public String networkType; 
-	public String riskManagerBehavior;
-	public String mediaBehavior;
-	public Double objectiveRisk;
-	public int eventMemory;
-	public Network friends = new Network(false);
 	
-	// properties
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Properties and constructors
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		
-	public int getNumCitizens() {
-		return numCitizens;
-	}
-
-	public void setNumCitizens(int numCitizens) {
-		this.numCitizens = numCitizens;
-	}
-
-	public String getNetworkType() {
-		return networkType;
-	}
-
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
-	}
-
-	public String getRiskManagerBehavior() {
-		return riskManagerBehavior;
-	}
-
-	public void setRiskManagerBehavior(String riskManagerBehavior) {
-		this.riskManagerBehavior = riskManagerBehavior;
-	}
-
-	public String getMediaBehavior() {
-		return mediaBehavior;
-	}
-
-	public void setMediaBehavior(String mediaBehavior) {
-		this.mediaBehavior = mediaBehavior;
-	}
-
-	public Double getObjectiveRisk() {
-		return objectiveRisk;
-	}
-
-	public void setObjectiveRisk(Double objectiveRisk) {
-		this.objectiveRisk = objectiveRisk;
-	}
-
-	public int getEventMemory() {
-		return eventMemory;
-	}
-
-	public void setEventMemory(int eventMemory) {
-		this.eventMemory = eventMemory;
-	}
+	public Continuous2D area ; //TODO: make proper properties of area and friends
+	public  Network friends;
+	private int numCitizens = 16;
+	private String networkType; 
+	private String riskManagerBehavior;
+	private String mediaBehavior;
+	private Double objectiveRisk;
+	private int eventMemory;
+	public ec.util.MersenneTwisterFast randomGenerator;
+	
+	public int getNumCitizens() { return numCitizens;}
+	public void setNumCitizens(int numCitizens) { this.numCitizens = numCitizens; }
+	public String getNetworkType() { return networkType; }
+	public void setNetworkType(String networkType) { this.networkType = networkType; }
+	public String getRiskManagerBehavior() { return riskManagerBehavior; }
+	public void setRiskManagerBehavior(String riskManagerBehavior) { this.riskManagerBehavior = riskManagerBehavior; }
+	public String getMediaBehavior() { return mediaBehavior; }
+	public void setMediaBehavior(String mediaBehavior) { this.mediaBehavior = mediaBehavior; }
+	public Double getObjectiveRisk() { return objectiveRisk; }
+	public void setObjectiveRisk(Double objectiveRisk) { this.objectiveRisk = objectiveRisk; }
+	public int getEventMemory() { return eventMemory; }
+	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
 	
 	/**
 	 * @param seed
@@ -82,6 +54,9 @@ public class Saar extends SimState
 	
 	public Saar(long seed) {
 		super(seed);
+		area = new Continuous2D(1.0,100,100);
+		randomGenerator = new MersenneTwisterFast();
+		friends = new Network(false);
 	}
 
 	/**
@@ -188,6 +163,7 @@ public class Saar extends SimState
 				{
 					// wire with random node with probability beta
 					// TODO: this is not entirely correct; a node has to be randomly selected from a set without already wired nodes and neighbour
+					// TODO: use MASON random generator
 					do {
 						int tmp = random.nextInt(numCitizens);
 						acquaintance = citizens.get(tmp);
