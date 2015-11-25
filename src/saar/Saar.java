@@ -19,16 +19,71 @@ public class Saar extends SimState
 		
 	public Continuous2D area = new Continuous2D(1.0,100,100);
 	public int numCitizens = 16;
+	public String networkType; 
+	public String riskManagerBehavior;
+	public String mediaBehavior;
+	public Double objectiveRisk;
+	public int eventMemory;
 	public Network friends = new Network(false);
+	
+	// properties
+		
+	public int getNumCitizens() {
+		return numCitizens;
+	}
+
+	public void setNumCitizens(int numCitizens) {
+		this.numCitizens = numCitizens;
+	}
+
+	public String getNetworkType() {
+		return networkType;
+	}
+
+	public void setNetworkType(String networkType) {
+		this.networkType = networkType;
+	}
+
+	public String getRiskManagerBehavior() {
+		return riskManagerBehavior;
+	}
+
+	public void setRiskManagerBehavior(String riskManagerBehavior) {
+		this.riskManagerBehavior = riskManagerBehavior;
+	}
+
+	public String getMediaBehavior() {
+		return mediaBehavior;
+	}
+
+	public void setMediaBehavior(String mediaBehavior) {
+		this.mediaBehavior = mediaBehavior;
+	}
+
+	public Double getObjectiveRisk() {
+		return objectiveRisk;
+	}
+
+	public void setObjectiveRisk(Double objectiveRisk) {
+		this.objectiveRisk = objectiveRisk;
+	}
+
+	public int getEventMemory() {
+		return eventMemory;
+	}
+
+	public void setEventMemory(int eventMemory) {
+		this.eventMemory = eventMemory;
+	}
 	
 	/**
 	 * @param seed
 	 */
+	
 	public Saar(long seed) {
-		
 		super(seed);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -44,13 +99,14 @@ public class Saar extends SimState
 		int xPos = 1;
 		int yPos = 0;
 		
+		System.out.print("Creating agents: ");
 		for(int i = 0; i < numCitizens; i++)
 		{
 			Citizen citizen = new Citizen(i);
 			
 			// spread citizens over the area
 			
-			if ( xPos < 40 ) 
+			if ( xPos < 100 ) 
 				xPos = xPos + 10;
 			else {
 				xPos = 0;
@@ -64,8 +120,10 @@ public class Saar extends SimState
 		}
 		
 		// create edges in social network
+		System.out.println("");
+		System.out.print("Creating Social Network: ");
 		
-		String networkType = "WattsBeta";
+		networkType = "Lattice";
 		switch ( networkType ) 
 		{
 			case "Lattice":
@@ -79,6 +137,8 @@ public class Saar extends SimState
 				break;
 				
 		}		
+		
+		System.out.println("Model Started.");
 	}
 	
 	/**
@@ -87,6 +147,7 @@ public class Saar extends SimState
 	
 	public void createNetworkLattice()
 	{
+		System.out.println("Lattice");
 
 		Bag citizens = friends.getAllNodes();
 
@@ -105,6 +166,8 @@ public class Saar extends SimState
 	
 	public void createNetworkWattsStrogatz(int degree, double beta) 
 	{
+		System.out.println("Watts beta");
+		
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected
 		Bag neighbours = new Bag();
 		
@@ -169,8 +232,7 @@ public class Saar extends SimState
 	 */
 	
 	public static void main(String[] args) 
-	{
-		
+	{		
 		doLoop(Saar.class, args);
 		System.exit(0);
 
