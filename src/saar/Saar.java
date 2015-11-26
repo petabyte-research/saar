@@ -20,7 +20,7 @@ public class Saar extends SimState
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Properties and constructors
+// Properties, constructors and main
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,11 +57,34 @@ public class Saar extends SimState
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
 		friends = new Network(false);
+		
+		// TODO: get these from commandline, configfile or model inspectors
+		networkType = "Lattice";
+		objectiveRisk = 0.0001;
 	}
+	
+	/**
+	 * @param args
+	 */
+	
+	public static void main(String[] args) 
+	{		
+		doLoop(Saar.class, args);
+		System.exit(0);
+
+	}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Initializing and Starting methods
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * 
 	 */
+	
 	
 	public void start()
 	{
@@ -75,20 +98,22 @@ public class Saar extends SimState
 		int yPos = 0;
 		
 		System.out.print("Creating agents: ");
+		
 		for(int i = 0; i < numCitizens; i++)
 		{
-			Citizen citizen = new Citizen(i);
+			Citizen citizen = new Citizen(i, objectiveRisk); //TODO: randomize objectiveRisk 
 			
 			// spread citizens over the area
-			
 			if ( xPos < 100 ) 
 				xPos = xPos + 10;
 			else {
 				xPos = 0;
 				yPos = yPos + 10;
 			}
-			area.setObjectLocation(citizen, new Double2D(xPos, yPos));				
-				
+			area.setObjectLocation(citizen, new Double2D(xPos, yPos));	
+			
+			// TODO: set citizen's risk perception
+			
 			// add citizen to social network and schedule 
 			friends.addNode(citizen);
 			schedule.scheduleRepeating(citizen);
@@ -98,7 +123,7 @@ public class Saar extends SimState
 		System.out.println("");
 		System.out.print("Creating Social Network: ");
 		
-		networkType = "Lattice";
+		
 		switch ( networkType ) 
 		{
 			case "Lattice":
@@ -184,6 +209,13 @@ public class Saar extends SimState
 		
 	}
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Auxiliary 
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
 	/**
 	 * 
 	 * @param ID
@@ -203,15 +235,6 @@ public class Saar extends SimState
 		return null;
 	}
 
-	/**
-	 * @param args
-	 */
-	
-	public static void main(String[] args) 
-	{		
-		doLoop(Saar.class, args);
-		System.exit(0);
 
-	}
 
 }
