@@ -7,10 +7,8 @@ package saar.agents;
 
 
 import sim.engine.*;
-import sim.field.continuous.*;
 import sim.field.network.*;
 import sim.util.*;
-import ec.util.*;
 import saar.Saar;
 import saar.Message;
 

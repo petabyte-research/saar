@@ -13,50 +13,60 @@ import saar.Saar;
 
 public class SaarWithGui extends GUIState {
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//Properties, constructors and main
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
 	public Display2D display;
 	public JFrame displayFrame;
 	ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
 	NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();
-	public JButton messageButton;
 	
+	public static String getName() { return "Social Amplification and Attenuation of Risk"; }
+    public Object getSimulationInspectedObject() { return state; }  // non-volatile; needed to create inspectors
 	
-		public static void main(String[] args)
-		{
-			SaarWithGui vid = new SaarWithGui();
-			Console c = new Console(vid);
-			c.setVisible(true);
-		
-		}
-		
-		public SaarWithGui() { 
-			super(new Saar(System.currentTimeMillis())); 
-		}
-		
-		public SaarWithGui(SimState state) { 
-			super(state); 
+	/**
+	 * 
+	 */
+	public SaarWithGui() { 
+		super(new Saar(System.currentTimeMillis())); 
+	}
+	
+	/**
+	 * 
+	 * @param state
+	 */
+	public SaarWithGui(SimState state) { 
+		super(state); 
 
-		}
+	}
+	
+	/**
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args)
+	{
+		SaarWithGui vid = new SaarWithGui();
+		Console c = new Console(vid);
+		c.setVisible(true);
+	
+	}
 		
-		// allow the user to inspect the model
-	    public Object getSimulationInspectedObject() { return state; }  // non-volatile
 		
-		public static String getName() { 
-			return "Social Amplification and Attenuation of Risk"; 
-		}
-		
-		public void start()
-		{
-			super.start();
-			setupPortrayals();
-		
-		}
-		
-		public void load(SimState state)
-		{
-			super.load(state);
-			setupPortrayals();
-		}
-		
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Initialization and starting methods
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		/**
+		 * 
+		 */
 		public void setupPortrayals()
 		{
 			Saar saar = (Saar) state;
@@ -74,6 +84,9 @@ public class SaarWithGui extends GUIState {
 			display.repaint();
 		}
 		
+		/**
+		 * 
+		 */
 		public void init(Controller c)
 		{
 			super.init(c);
@@ -86,12 +99,30 @@ public class SaarWithGui extends GUIState {
 			display.attach( buddiesPortrayal, "Buddies" );
 			display.attach( yardPortrayal, "Area" );
 			
-			messageButton = new JButton("Message");
-			messageButton.setVisible(true);
-			
 		}
 		
+	    /***
+	     * 
+	     */
+		public void start()
+		{
+			super.start();
+			setupPortrayals();
 		
+		}
+		
+		/**
+		 * 
+		 */
+		public void load(SimState state)
+		{
+			super.load(state);
+			setupPortrayals();
+		}
+		
+		/**
+		 * 
+		 */
 		public void quit()
 		{
 			super.quit();

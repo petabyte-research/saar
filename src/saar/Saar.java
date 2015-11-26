@@ -94,11 +94,9 @@ public class Saar extends SimState
 		area.clear();
 		
 		// add citizens
+		System.out.print("Creating agents: ");
 		int xPos = 1;
 		int yPos = 0;
-		
-		System.out.print("Creating agents: ");
-		
 		for(int i = 0; i < numCitizens; i++)
 		{
 			Citizen citizen = new Citizen(i, objectiveRisk); //TODO: randomize objectiveRisk 
@@ -112,18 +110,16 @@ public class Saar extends SimState
 			}
 			area.setObjectLocation(citizen, new Double2D(xPos, yPos));	
 			
-			// TODO: set citizen's risk perception
-			
 			// add citizen to social network and schedule 
 			friends.addNode(citizen);
 			schedule.scheduleRepeating(citizen);
+			
+			System.out.print(i);
 		}
+		System.out.println("");
 		
 		// create edges in social network
-		System.out.println("");
 		System.out.print("Creating Social Network: ");
-		
-		
 		switch ( networkType ) 
 		{
 			case "Lattice":
@@ -138,7 +134,7 @@ public class Saar extends SimState
 				
 		}		
 		
-		System.out.println("Model Started.");
+		System.out.println("Model Initialized.");
 	}
 	
 	/**
