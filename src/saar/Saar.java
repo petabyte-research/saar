@@ -105,9 +105,13 @@ public class Saar extends SimState
 		System.out.print("Creating agents: ");
 		int xPos = 1;
 		int yPos = 0;
+		Double initialRisk = 0.0;
+		Double lowerRiskBound = objectiveRisk * 0.90;
+		Double riskInterval = objectiveRisk * 0.2;
 		for(int i = 0; i < numCitizens; i++)
 		{
-			Citizen citizen = new Citizen(i, objectiveRisk); //TODO: randomize objectiveRisk 
+			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
+			Citizen citizen = new Citizen(i, initialRisk); 
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 
