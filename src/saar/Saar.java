@@ -34,6 +34,7 @@ public class Saar extends SimState
 	private Double objectiveRisk;
 	private int eventMemory;
 	public ec.util.MersenneTwisterFast randomGenerator;
+	public Census census;
 	
 	public Continuous2D getArea() { return area;} 
 	public Network getFriends() { return friends;}
@@ -49,6 +50,7 @@ public class Saar extends SimState
 	public void setObjectiveRisk(Double objectiveRisk) { this.objectiveRisk = objectiveRisk; }
 	public int getEventMemory() { return eventMemory; }
 	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
+	public Double getAverageRiskPerception() { return census.getAverageRiskPerception() ; } 
 	
 	/**
 	 * @param seed
@@ -94,6 +96,10 @@ public class Saar extends SimState
 		
 		// clear area
 		area.clear();
+		
+		// add Census object for gathering statistics
+		census = new Census();
+		schedule.scheduleRepeating(census);
 		
 		// add citizens
 		System.out.print("Creating agents: ");
@@ -147,7 +153,7 @@ public class Saar extends SimState
 	{
 		System.out.println("Lattice");
 
-		Bag citizens = friends.getAllNodes();
+		Bag citizens = friends.getAllNodes(); 
 
 		for(int i = citizens.size() - 1 ; i > 0 ; i--)
 		{
