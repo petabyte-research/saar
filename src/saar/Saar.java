@@ -192,9 +192,8 @@ public class Saar extends SimState
 				{
 					// wire with random node with probability beta
 					// TODO: this is not entirely correct; a node has to be randomly selected from a set without already wired nodes and neighbour
-					// TODO: use MASON random generator
 					do {
-						int tmp = random.nextInt(numCitizens);
+						int tmp = randomGenerator.nextInt(numCitizens);
 						acquaintance = citizens.get(tmp);
 					}
 					while ( citizen == acquaintance || neighbour == acquaintance || friends.getEdge(citizen, acquaintance) == null );
