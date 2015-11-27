@@ -31,6 +31,7 @@ public class Citizen implements Steppable {
 	private Double riskPerception ;
 	private DoubleBag riskSignal;
 	private IntBag rpTotals;
+	private int eventMemory; 
 	
 	public Bag getIncomingQueue() { return incomingQueue;}
 	public void setIncomingQueue(Bag incomingQueue) {this.incomingQueue = incomingQueue;}
@@ -92,6 +93,17 @@ public class Citizen implements Steppable {
 	
 		// reset risk signal
 		riskSignal.clear();
+		
+		// check whether the agent experiences a risk event
+		if ( eventMemory >= 0 ) 
+			eventMemory--;
+		else
+			if ( model.randomGenerator.nextDouble(true, true) < model.getObjectiveRisk() ) {
+				eventMemory = model.getEventMemory();
+				riskPerception = 1.0;
+				System.out.println("Risk Event Experienced !!!");
+			}
+			
 		
 		// communicate
 		gossip();
@@ -163,6 +175,7 @@ public class Citizen implements Steppable {
 		
 	public void perceiveRisk()
 	{
+	
 		int riskSignalSize = riskSignal.size();
 		if ( riskSignalSize != 0 ) 
 		{ 
@@ -190,7 +203,6 @@ public class Citizen implements Steppable {
 				rpTotals.setValue(LOWER, (int) rpTotals.getValue(LOWER) +1 );
 			}
 		}
-			
 		
 	}
 	
