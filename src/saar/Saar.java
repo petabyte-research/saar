@@ -153,7 +153,7 @@ public class Saar extends SimState
 	{
 		System.out.println("Lattice");
 
-		Bag citizens = friends.getAllNodes(); 
+		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected 
 
 		for(int i = citizens.size() - 1 ; i > 0 ; i--)
 		{
