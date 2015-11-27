@@ -13,6 +13,8 @@ import ec.util.*;
 import sim.field.continuous.*;
 import sim.field.network.*;
 import saar.agents.*;
+import saar.ui.*;
+import com.beust.jcommander.*;
 
 
 public class Saar extends SimState
@@ -74,18 +76,22 @@ public class Saar extends SimState
 	
 	public static void main(String[] args) 
 	{		
+		// parse command line
+		CommandLineArgs commandLineArgs = new CommandLineArgs();
+		new JCommander(commandLineArgs,args);
+
 		// create the model
-		String networkType = "Lattice";
-		Double objectiveRisk = 0.0001;
-		int numCitizens = 1000;
-		int eventMemory = 10;
+		String networkType = commandLineArgs.networkType;
+		Double objectiveRisk = commandLineArgs.objectiveRisk;
+		int numCitizens = commandLineArgs.numCitizens;
+		int eventMemory = commandLineArgs.eventMemory;
 		SimState state = new Saar(System.currentTimeMillis(),networkType,objectiveRisk,numCitizens,eventMemory); // TODO: get paramters from commandline or configfile
 		
 		// start the model
-		int jobs = 1; 
-		int numSteps = 1000;
+		int numJobs = commandLineArgs.numJobs;
+		int numSteps = commandLineArgs.numSteps;
 		state.nameThread();
-		for(int job = 0; job < jobs; job++)
+		for(int job = 0; job < numJobs; job++)
 		{
 			state.setJob(job);
 			state.start();
@@ -95,6 +101,7 @@ public class Saar extends SimState
 			state.finish();
 		}
 		
+		// Exit
 		System.exit(0);
 
 	}
@@ -124,6 +131,7 @@ public class Saar extends SimState
 		
 		// add citizens
 		System.out.print("Creating agents: ");
+		System.out.println(numCitizens);
 		int xPos = 1;
 		int yPos = 0;
 		Double initialRisk = 0.0;
@@ -147,9 +155,7 @@ public class Saar extends SimState
 			friends.addNode(citizen);
 			schedule.scheduleRepeating(citizen);
 			
-			System.out.print(i);
 		}
-		System.out.println("");
 		
 		// create edges in social network
 		System.out.print("Creating Social Network: ");
@@ -168,6 +174,10 @@ public class Saar extends SimState
 				
 		}		
 		
+		System.out.print("Event Memory:");
+		System.out.println(eventMemory);
+		System.out.print("Objective Risk: ");
+		System.out.println(objectiveRisk);
 		System.out.println("Model Initialized.");
 	}
 	
