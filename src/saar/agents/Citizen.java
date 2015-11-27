@@ -20,6 +20,8 @@ public class Citizen implements Steppable {
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	private static final long serialVersionUID = 1L;
+	
 	private int HIGHER = 0;
 	private int EQUAL = 1;
 	private int LOWER = 2; 

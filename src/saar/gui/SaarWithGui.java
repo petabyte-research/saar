@@ -32,7 +32,7 @@ public class SaarWithGui extends GUIState {
 	 * 
 	 */
 	public SaarWithGui() { 
-		super(new Saar(System.currentTimeMillis())); 
+		super(new Saar(System.currentTimeMillis(), "Lattice", 0.0001,1000,10));
 	}
 	
 	/**

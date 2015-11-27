@@ -24,13 +24,15 @@ public class Census implements Steppable
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	private static final long serialVersionUID = 1L;
+	
 	private Double averageRiskPerception;
 	
 	public Double getAverageRiskPerception() { return averageRiskPerception ; }
 	
-	public void Census()
+	public Census()
 	{
-		
+		averageRiskPerception = 0.0;
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////

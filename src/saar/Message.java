@@ -19,7 +19,6 @@ public class Message {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	
 	private int messageID;
 	private int sender;
 	private Bag receivers;
@@ -46,7 +45,7 @@ public class Message {
 		receivers = new Bag();
 		content = new Bag();
 		
-		// TODO: determine message ID
+		// TODO: determine and set message ID
 		
 	}
 	

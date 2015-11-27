@@ -24,10 +24,11 @@ public class Saar extends SimState
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	private static final long serialVersionUID = 1L;
 		
 	private Continuous2D area ; 
 	private Network friends;
-	private int numCitizens = 16;
+	private int numCitizens;
 	private String networkType; 
 	private String riskManagerBehavior;
 	private String mediaBehavior;
@@ -56,15 +57,15 @@ public class Saar extends SimState
 	 * @param seed
 	 */
 	
-	public Saar(long seed) {
+	public Saar(long seed, String NetworkType, Double ObjectiveRisk, int NumCitizens, int EventMemory) {
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
 		friends = new Network(false);
-		
-		// TODO: get these from commandline, configfile or model inspectors
-		networkType = "Lattice";
-		objectiveRisk = 0.0001;
+		networkType = NetworkType;
+		objectiveRisk = ObjectiveRisk;
+		numCitizens = NumCitizens;
+		eventMemory = EventMemory;
 	}
 	
 	/**
@@ -73,7 +74,25 @@ public class Saar extends SimState
 	
 	public static void main(String[] args) 
 	{		
-		doLoop(Saar.class, args);
+		int jobs = 1; 
+		int numSteps = 1000;
+		String networkType = "Lattice";
+		Double objectiveRisk = 0.0001;
+		int numCitizens = 1000;
+		int eventMemory = 10;
+		SimState state = new Saar(System.currentTimeMillis(),networkType,objectiveRisk,numCitizens,eventMemory); // TODO: get paramters from commandline or configfile
+		state.nameThread();
+		for(int job = 0; job < jobs; job++)
+		{
+			state.setJob(job);
+			state.start();
+			do
+				if (!state.schedule.step(state)) break;
+			while(state.schedule.getSteps() < numSteps);
+			state.finish();
+		}
+		
+		//doLoop(Saar.class, args);
 		System.exit(0);
 
 	}
@@ -106,8 +125,8 @@ public class Saar extends SimState
 		int xPos = 1;
 		int yPos = 0;
 		Double initialRisk = 0.0;
-		Double lowerRiskBound = objectiveRisk * 0.90;
-		Double riskInterval = objectiveRisk * 0.2;
+		Double lowerRiskBound = objectiveRisk * 0.95;
+		Double riskInterval = objectiveRisk * 0.1;
 		for(int i = 0; i < numCitizens; i++)
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
@@ -141,7 +160,8 @@ public class Saar extends SimState
 				createNetworkWattsStrogatz(4, 0.5);
 				break;
 			default:
-				// TODO: add default social network
+				System.out.println("None !!!");
+				System.out.println("*** Warning: no social network has been set up.");
 				break;
 				
 		}		
