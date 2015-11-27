@@ -71,10 +71,10 @@ public class SaarWithGui extends GUIState {
 		{
 			Saar saar = (Saar) state;
 			// tell the portrayals what to portray and how to portray them
-			yardPortrayal.setField( saar.area );
+			yardPortrayal.setField( saar.getArea() );
 			yardPortrayal.setPortrayalForAll(new OvalPortrayal2D());
 			
-			buddiesPortrayal.setField( new SpatialNetwork2D( saar.area, saar.friends ) );
+			buddiesPortrayal.setField( new SpatialNetwork2D( saar.getArea(), saar.getFriends() ) );
 			buddiesPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
 
 					// reschedule the displayer

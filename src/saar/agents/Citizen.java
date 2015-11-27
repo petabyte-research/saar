@@ -147,7 +147,7 @@ public class Citizen implements Steppable {
 		Message gossipRequest = new Message(agentID,"gossiprequest");
 		
 		// add neighbours to receivers of gossip query
-		Bag neighbours = model.friends.getEdgesOut(this);
+		Bag neighbours = model.getFriends().getEdgesOut(this);
 		for (int i = 0 ; i < neighbours.size(); i++ ) 
 			gossipRequest.addReceiver( (Citizen) ((Edge) neighbours.get(i)).getOtherNode(this));
 		

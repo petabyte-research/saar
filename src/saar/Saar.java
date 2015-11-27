@@ -25,8 +25,8 @@ public class Saar extends SimState
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		
-	public Continuous2D area ; //TODO: make proper properties of area and friends
-	public  Network friends;
+	private Continuous2D area ; 
+	private Network friends;
 	private int numCitizens = 16;
 	private String networkType; 
 	private String riskManagerBehavior;
@@ -35,6 +35,8 @@ public class Saar extends SimState
 	private int eventMemory;
 	public ec.util.MersenneTwisterFast randomGenerator;
 	
+	public Continuous2D getArea() { return area;} 
+	public Network getFriends() { return friends;}
 	public int getNumCitizens() { return numCitizens;}
 	public void setNumCitizens(int numCitizens) { this.numCitizens = numCitizens; }
 	public String getNetworkType() { return networkType; }
