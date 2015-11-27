@@ -74,13 +74,16 @@ public class Saar extends SimState
 	
 	public static void main(String[] args) 
 	{		
-		int jobs = 1; 
-		int numSteps = 1000;
+		// create the model
 		String networkType = "Lattice";
 		Double objectiveRisk = 0.0001;
 		int numCitizens = 1000;
 		int eventMemory = 10;
 		SimState state = new Saar(System.currentTimeMillis(),networkType,objectiveRisk,numCitizens,eventMemory); // TODO: get paramters from commandline or configfile
+		
+		// start the model
+		int jobs = 1; 
+		int numSteps = 1000;
 		state.nameThread();
 		for(int job = 0; job < jobs; job++)
 		{
@@ -92,7 +95,6 @@ public class Saar extends SimState
 			state.finish();
 		}
 		
-		//doLoop(Saar.class, args);
 		System.exit(0);
 
 	}
