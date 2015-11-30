@@ -76,7 +76,7 @@ public class Saar extends SimState
 	
 	public static void main(String[] args) 
 	{		
-		// parse command line
+		// parse command line. If no arguments are given, defaults from CommandLindArgs Class are used
 		CommandLineArgs commandLineArgs = new CommandLineArgs();
 		new JCommander(commandLineArgs,args);
 
@@ -144,10 +144,10 @@ public class Saar extends SimState
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 
-				xPos = xPos + 10;
+				xPos = xPos + 3;
 			else {
 				xPos = 0;
-				yPos = yPos + 10;
+				yPos = yPos + 3;
 			}
 			area.setObjectLocation(citizen, new Double2D(xPos, yPos));	
 			
@@ -165,7 +165,7 @@ public class Saar extends SimState
 				createNetworkLattice();
 				break;
 			case "WattsBeta":
-				createNetworkWattsStrogatz(4, 0.5);
+				createNetworkWattsStrogatz(8, 0.25);
 				break;
 			default:
 				System.out.println("None !!!");
@@ -211,18 +211,19 @@ public class Saar extends SimState
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected
 		Bag neighbours = new Bag();
 		
-		for (int i = 0 ; i < citizens.size() ; i++  )
+		for (int i = 0 ; i < citizens.size() ; i++  ) 
 		{
 			Object citizen = citizens.get(i);
 			Double2D pos = area.getObjectLocation(citizen);
 			
 			// get degree neigbours
-			neighbours = area.getNearestNeighbors(pos, degree, false, false, false, neighbours);
+			neighbours = area.getNearestNeighbors(pos, degree, false, false, true, neighbours);
 			
 			// wire neighbours and/or random node		
 			Object acquaintance = new Object();
-			for ( int n = 0; n < neighbours.size() ; n++ )
+			for ( int n = 0; n < degree ; n++ ) // should loop to citizens.size(), but that can be larger than degree
 			{
+				
 				Object neighbour = neighbours.get(n);
 				if ( random.nextDouble() < beta ) 
 				{
@@ -232,7 +233,8 @@ public class Saar extends SimState
 						int tmp = randomGenerator.nextInt(numCitizens);
 						acquaintance = citizens.get(tmp);
 					}
-					while ( citizen == acquaintance || neighbour == acquaintance || friends.getEdge(citizen, acquaintance) == null );
+					while ( citizen == acquaintance || neighbour == acquaintance || friends.getEdge(citizen, acquaintance) != null );
+		
 					
 					friends.addEdge(citizen,acquaintance,1.0);
 				} 
@@ -242,10 +244,9 @@ public class Saar extends SimState
 					if ( friends.getEdge(citizen, neighbour) == null )
 						friends.addEdge(citizen,neighbour,1.0);
 				}
-			
 			}
 		}
-		
+
 	}
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
