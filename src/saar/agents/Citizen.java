@@ -103,7 +103,7 @@ public class Citizen implements Steppable {
 			if ( model.randomGenerator.nextDouble(true, true) < model.getObjectiveRisk() ) {
 				eventMemory = model.getEventMemory();
 				riskPerception = 1.0;
-				System.out.println("Risk Event Experienced !!!");
+				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
 			}
 			
 		

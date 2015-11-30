@@ -130,7 +130,7 @@ public class Saar extends SimState
 		schedule.scheduleRepeating(census);
 		
 		// add citizens
-		census.log("Creating agents: " + numCitizens );
+		census.log("Creating agents: " + numCitizens + " " );
 		int xPos = 1;
 		int yPos = 0;
 		Double initialRisk = 0.0;
@@ -157,7 +157,7 @@ public class Saar extends SimState
 		}
 		
 		// create edges in social network
-		System.out.print("Creating Social Network: ");
+		census.log("Creating Social Network: ");
 		switch ( networkType ) 
 		{
 			case "Lattice":
@@ -173,11 +173,9 @@ public class Saar extends SimState
 				
 		}		
 		
-		System.out.print("Event Memory:");
-		System.out.println(eventMemory);
-		System.out.print("Objective Risk: ");
-		System.out.println(objectiveRisk);
-		System.out.println("Model Initialized.");
+		census.log("Event Memory: " + eventMemory + " ");
+		census.log("Objective Risk: " + objectiveRisk + " ");
+	
 	}
 	
 	/**
@@ -186,7 +184,7 @@ public class Saar extends SimState
 	
 	public void createNetworkLattice()
 	{
-		System.out.println("Lattice");
+		census.log("Lattice" + " ");
 
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected 
 
@@ -205,7 +203,7 @@ public class Saar extends SimState
 	
 	public void createNetworkWattsStrogatz(int degree, double beta) 
 	{
-		System.out.println("Watts beta");
+		census.log("Watts beta" + " ");
 		
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected
 		Bag neighbours = new Bag();

@@ -42,12 +42,14 @@ public class Census implements Steppable
 		averageRiskPerception = 0.0;
 		
 		// initialize log file
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
  	   	Date date = new Date();
- 	    logFileName =  dateFormat.format(date) + ".log";
+ 	    logFileName = dateFormat.format(date) + ".log";
         try {
-             writer = new BufferedWriter(new FileWriter(logFileName));
+             writer = new BufferedWriter(new FileWriter( logFileName ));
              writer.write(logFileName + "\n");
+             writer.newLine();
+             writer.flush();
          } catch (IOException e) {
         	 System.out.println(e);
          }
@@ -79,7 +81,10 @@ public class Census implements Steppable
 		// write data to file
 		try 
 		{
-			writer.write(averageRiskPerception.toString() + "\n");
+			writer.newLine();
+			writer.write( String.valueOf(model.schedule.getSteps()) + ",");
+			writer.write(averageRiskPerception.toString());   
+			writer.write(",");
 		}
 		catch (IOException e) {
 				// TODO: handle file error
@@ -87,18 +92,37 @@ public class Census implements Steppable
 		
 	}
 	
+	/**
+	 * 
+	 * @param logString
+	 */
 	public void log(String logString)
 	{
 		System.out.println(logString);
 		try {
 			writer.write(logString);
+			writer.flush();
 		}
 		catch (IOException e) {
 			System.out.println(e);
 		}
-	
 	}
-
+	
+	/**
+	 * 
+	 */
+	public void flush()
+	{
+		try {
+			writer.flush();
+		}
+		catch (IOException e) {
+			System.out.println(e);
+		}
+	}
+	
 }
+
+
 
 
