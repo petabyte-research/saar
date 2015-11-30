@@ -130,8 +130,7 @@ public class Saar extends SimState
 		schedule.scheduleRepeating(census);
 		
 		// add citizens
-		System.out.print("Creating agents: ");
-		System.out.println(numCitizens);
+		census.log("Creating agents: " + numCitizens );
 		int xPos = 1;
 		int yPos = 0;
 		Double initialRisk = 0.0;

@@ -3,6 +3,8 @@
 	<name>saar</name>
 	<comment></comment>
 	<projects>
+		<project>JCommander</project>
+		<project>mason</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

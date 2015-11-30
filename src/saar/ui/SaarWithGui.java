@@ -1,4 +1,4 @@
-package saar.gui;
+package saar.ui;
 
 
 import sim.engine.*;
@@ -32,7 +32,7 @@ public class SaarWithGui extends GUIState {
 	 * 
 	 */
 	public SaarWithGui() { 
-		super(new Saar(System.currentTimeMillis(), "Lattice", 0.0001,1000,10));
+		super(new Saar(System.currentTimeMillis(), "WattsBeta", 0.0001,1000,10));
 	}
 	
 	/**
