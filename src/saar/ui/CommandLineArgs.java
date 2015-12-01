@@ -12,7 +12,7 @@ public class CommandLineArgs {
 	public int numSteps = 1000;
 	
 	@Parameter(names = { "-t", "-networkType" }, description = "Social Network Type (default Lattice)")
-	public String networkType = "WattsBeta";
+	public String networkType = "Lattice";
 	 
 	@Parameter(names = { "-o", "-objectiveRisk" }, description = "Objective Risk, probability of experiencing risk event (default 0.0001) ")
 	public Double objectiveRisk = 0.0001;
@@ -21,7 +21,7 @@ public class CommandLineArgs {
 	public int numCitizens = 1000;
 	
 	@Parameter(names = { "-m", "-eventMemory" }, description = "Memory for risk event in steps (default: 10) ")
-	public int eventMemory = 1000;
+	public int eventMemory = 10;
 	
 
 }

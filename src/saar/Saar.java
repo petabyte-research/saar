@@ -85,7 +85,7 @@ public class Saar extends SimState
 		Double objectiveRisk = commandLineArgs.objectiveRisk;
 		int numCitizens = commandLineArgs.numCitizens;
 		int eventMemory = commandLineArgs.eventMemory;
-		SimState state = new Saar(System.currentTimeMillis(),networkType,objectiveRisk,numCitizens,eventMemory); // TODO: get paramters from commandline or configfile
+		SimState state = new Saar(System.currentTimeMillis(),networkType,objectiveRisk,numCitizens,eventMemory); 
 		
 		// start the model
 		int numJobs = commandLineArgs.numJobs;
@@ -116,8 +116,6 @@ public class Saar extends SimState
 	/**
 	 * 
 	 */
-	
-	
 	public void start()
 	{
 		super.start();
@@ -127,6 +125,7 @@ public class Saar extends SimState
 		
 		// add Census object for gathering statistics
 		census = new Census();
+		census.initializeLogFile();
 		schedule.scheduleRepeating(census);
 		
 		// add citizens
@@ -176,6 +175,15 @@ public class Saar extends SimState
 		census.log("Event Memory: " + eventMemory + " ");
 		census.log("Objective Risk: " + objectiveRisk + " ");
 	
+	}
+	
+	/**
+	 * 
+	 */
+	public void finish()
+	{
+		census.endSession();
+		super.finish();
 	}
 	
 	/**
