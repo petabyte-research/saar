@@ -244,10 +244,8 @@ public class Citizen implements Steppable {
 
 	public void sendMessages()
 	{
-		// TODO: error handling
-		for ( int i = 0 ; i < outgoingQueue.size() ; i++) 
-			sendMessage( (Message) outgoingQueue.get(i) );
-
+		while ( ! outgoingQueue.isEmpty())
+			sendMessage(  (Message) outgoingQueue.pop());
 	}
 }
 
