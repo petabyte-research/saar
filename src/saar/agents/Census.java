@@ -31,18 +31,21 @@ public class Census implements Steppable
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Double averageRiskPerception;
+	private Double meanRiskPerception;
+	private Double stDevRiskPerception;
 	private String logFileName;
 	private BufferedWriter writer;
 	
-	public Double getAverageRiskPerception() { return averageRiskPerception ; }
+	public Double getMeanRiskPerception() { return meanRiskPerception ; }
+	public Double getStDevRiskPerception() { return stDevRiskPerception ; }
 	
 	/**
 	 * 
 	 */
 	public Census()
 	{
-		averageRiskPerception = 0.0;
+		meanRiskPerception = 0.0;
+		stDevRiskPerception = 0.0;
 	}
 	
 	
@@ -75,7 +78,7 @@ public class Census implements Steppable
 	 */
 	public void endSession()
 	{
-		log("Job ended.");
+		log("\nJob ended.");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 		Date date = new Date();
 		log( dateFormat.format(date) );
@@ -88,26 +91,38 @@ public class Census implements Steppable
 	 */
 	public void step(SimState state)
 	{
-		// calculate average risk perception
 		Saar model = (Saar) state;
+			
+		// calculate average risk perception and its standard deviation (wellford algorithm)
 		Bag citizens = new Bag(model.getFriends().getAllNodes());
 		int numberOfCitizens = citizens.size();
-		averageRiskPerception = 0.0;
-		
-		for(int i = 0 ; i < numberOfCitizens ; i++)
-			averageRiskPerception = averageRiskPerception + ((Citizen) citizens.get(i)).getRiskPerception();
-		averageRiskPerception = averageRiskPerception / numberOfCitizens;
-		
+		meanRiskPerception = ((Citizen) citizens.get(0)).getRiskPerception();
+		Double value;
+		Double mCurrent = 0.0;
+		Double sD = 0.0;
+		Double mPrevious = meanRiskPerception;
+		for(int i = 1 ; i < numberOfCitizens ; i++) {
+			value = ((Citizen) citizens.get(i)).getRiskPerception();
+			meanRiskPerception = meanRiskPerception + value;
+			mCurrent = mPrevious + ( value - mPrevious ) / i;
+			sD =  sD + ( value - mPrevious ) * ( value - mCurrent );
+			mPrevious = mCurrent;
+		}
+		meanRiskPerception = meanRiskPerception / numberOfCitizens;
+		stDevRiskPerception = Math.sqrt( sD/ numberOfCitizens );
+
 		// write data to file
 		try 
 		{
 			writer.newLine();
 			writer.write( String.valueOf(model.schedule.getSteps()) + ",");
-			writer.write(averageRiskPerception.toString());   
+			writer.write(meanRiskPerception.toString());  
+			writer.write(","+ stDevRiskPerception.toString());
+			writer.write(","+ sD.toString());
 			writer.write(",");
 		}
 		catch (IOException e) {
-				// TODO: handle file error
+				System.out.println(e);
 		}
 		
 	}

@@ -53,7 +53,8 @@ public class Saar extends SimState
 	public void setObjectiveRisk(Double objectiveRisk) { this.objectiveRisk = objectiveRisk; }
 	public int getEventMemory() { return eventMemory; }
 	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
-	public Double getAverageRiskPerception() { return census.getAverageRiskPerception() ; } 
+	public Double getMeanRiskPerception() { return census.getMeanRiskPerception() ; } 
+	public Double getStDevRiskPerception() { return census.getMeanRiskPerception() ; } 
 	
 	/**
 	 * @param seed

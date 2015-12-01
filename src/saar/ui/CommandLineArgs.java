@@ -12,7 +12,7 @@ public class CommandLineArgs {
 	public int numSteps = 1000;
 	
 	@Parameter(names = { "-t", "-networkType" }, description = "Social Network Type (default Lattice)")
-	public String networkType = "Lattice";
+	public String networkType = "WattsBeta";
 	 
 	@Parameter(names = { "-o", "-objectiveRisk" }, description = "Objective Risk, probability of experiencing risk event (default 0.0001) ")
 	public Double objectiveRisk = 0.0001;
