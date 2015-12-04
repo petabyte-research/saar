@@ -58,7 +58,6 @@ public class Agent implements Steppable {
 	 */
 	protected void processMessages()
 	{
-		Message tmpMessage;
 		while ( ! incomingQueue.isEmpty())
 			processMessage((Message) incomingQueue.pop());
 	}

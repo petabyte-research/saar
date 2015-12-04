@@ -5,7 +5,6 @@ package saar.agents;
 
 import saar.Message;
 import sim.engine.SimState;
-import sim.util.Bag;
 
 /**
  * @author QuispelL
@@ -19,6 +18,7 @@ public class Medium extends Agent {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	protected static final long serialVersionUID = 1L;
 
 	/**
 	 * 
@@ -35,6 +35,7 @@ public class Medium extends Agent {
 
 	/**
 	 * 
+	 * @param state
 	 */
 	public void step(SimState state) 
 	{

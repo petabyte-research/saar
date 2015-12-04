@@ -19,6 +19,8 @@ public class Citizen extends Agent  {
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	protected static final long serialVersionUID = 1L;
+	
 	private int HIGHER = 0;
 	private int EQUAL = 1;
 	private int LOWER = 2; 
