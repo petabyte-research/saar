@@ -9,10 +9,9 @@ package saar.agents;
 import sim.engine.*;
 import sim.field.network.*;
 import sim.util.*;
-import saar.Saar;
 import saar.Message;
 
-public class Citizen implements Steppable {
+public class Citizen extends Agent implements Steppable {
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -20,34 +19,25 @@ public class Citizen implements Steppable {
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	private static final long serialVersionUID = 1L;
-	
 	private int HIGHER = 0;
 	private int EQUAL = 1;
 	private int LOWER = 2; 
 	
-	private int agentID;
-	private Saar model;
-	private Bag incomingQueue ;
-	private Bag outgoingQueue ; 
-	private Double riskPerception ;
-	private DoubleBag riskSignal;
+	DoubleBag riskSignal;
 	private IntBag rpTotals;
-	private int eventMemory; 
+	int eventMemory; 
 	
 	public Bag getIncomingQueue() { return incomingQueue;}
 	public void setIncomingQueue(Bag incomingQueue) {this.incomingQueue = incomingQueue;}
 	public Bag getOutgoingQueue() {return outgoingQueue;}
 	public void setOutgoingQueue(Bag outgoingQueue) {this.outgoingQueue = outgoingQueue;}
-	public Double getRiskPerception() {return riskPerception;}
 	public void setRiskPerception(Double riskPerception) {this.riskPerception = riskPerception;}
-	public int getAgentID()	{return agentID;}
 	
 	/**
 	 * 
 	 */
-	public Citizen(int id) {
-		
+	public Citizen(int id) 
+	{
 		agentID = id;
 		riskPerception = 0.0;
 		initCitizen();
@@ -87,12 +77,10 @@ public class Citizen implements Steppable {
 	/**
 	 * 
 	 */
-	
-	public void step(SimState state)
+	public void step(SimState state) 
 	{
-		// TODO: why get state here and not in constructor ?
-		model = (Saar) state;
-	
+		super.step(state);
+		
 		// reset risk signal
 		riskSignal.clear();
 		
@@ -106,7 +94,6 @@ public class Citizen implements Steppable {
 				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
 			}
 			
-		
 		// communicate
 		gossip();
 		processMessages();
@@ -114,48 +101,40 @@ public class Citizen implements Steppable {
 		
 		// perceive risk
 		perceiveRisk();
-		
 	}
+	
+	
 	
 	/**
 	 * 
+	 * @param message
 	 */
-	
-	
-	public void processMessages()
+	public void processMessage(Message message)
 	{
-		
-		Message tmpMessage;
-		while ( ! incomingQueue.isEmpty())
+		switch ( message.getPerformative() )
 		{
-			tmpMessage =  (Message) incomingQueue.pop();
-			switch ( tmpMessage.getPerformative() )
-			{
-				case "gossiprequest":
-					// gossip query received; return risk perception in gossip reply
-					Message gossipResponse = new Message(agentID,"gossipresponse");
-					Bag gossipResponseContent = new Bag();
-					gossipResponseContent.add(riskPerception);
-					gossipResponse.setContent(gossipResponseContent);
-					outgoingQueue.add(gossipResponse);
-					break;
-				case "gossipresponse":
-					// response to gossip request received; store information in risk signal
-					riskSignal.add( (Double) tmpMessage.getContent().get(0));
-					break;
-				default:
-					// TODO: handle unknown performative
-					System.out.println("Unknown Performative in Message !!!");
-					break;
-			}
+			case "gossiprequest":
+				// gossip query received; return risk perception in gossip reply
+				Message gossipResponse = new Message(agentID,"gossipresponse");
+				Bag gossipResponseContent = new Bag();
+				gossipResponseContent.add(riskPerception);
+				gossipResponse.setContent(gossipResponseContent);
+				outgoingQueue.add(gossipResponse);
+				break;
+			case "gossipresponse":
+				// response to gossip request received; store information in risk signal
+				riskSignal.add( (Double) message.getContent().get(0));
+				break;
+			default:
+				// TODO: handle unknown performative
+				System.out.println("Unknown Performative in Message !!!");
+				break;
 		}
 	}
 	
 	/**
 	 * 
 	 */
-	
-	
 	public void gossip()
 	{
 		Message gossipRequest = new Message(agentID,"gossiprequest");
@@ -208,44 +187,6 @@ public class Citizen implements Steppable {
 		
 	}
 	
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Auxiliary 
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * 
-	 * @param message
-	 */
-	
-	public void receiveMessage(Message message)
-	{
-		// TODO: error handling
-		incomingQueue.add(message);
-	}
-	
-	/**
-	 * 
-	 * @param message
-	 */
-	
-	public void sendMessage(Message message)
-	{
-		// TODO: error handling
-		Bag receivers = message.getReceivers();
-		for ( int i = 0 ; i < receivers.size() ; i++)
-			((Citizen) receivers.get(i)).receiveMessage(message);
-	}
-	
-	/*
-	 * 
-	 */
-
-	public void sendMessages()
-	{
-		while ( ! outgoingQueue.isEmpty())
-			sendMessage(  (Message) outgoingQueue.pop());
-	}
 }
 
