@@ -6,7 +6,7 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
 
-public class Agent {
+public class Agent implements Steppable {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

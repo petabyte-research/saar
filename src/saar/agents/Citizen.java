@@ -11,7 +11,7 @@ import sim.field.network.*;
 import sim.util.*;
 import saar.Message;
 
-public class Citizen extends Agent implements Steppable {
+public class Citizen extends Agent  {
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//

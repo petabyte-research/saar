@@ -6,8 +6,6 @@ package saar.agents;
 import java.util.*;
 import java.text.*;
 import java.io.*;
-import java.nio.file.*;
-import static java.nio.file.StandardOpenOption.*;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -78,7 +76,7 @@ public class Census implements Steppable
 	 */
 	public void endSession()
 	{
-		log("\nJob ended.");
+		log("\n Job ended.");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 		Date date = new Date();
 		log( dateFormat.format(date) );
@@ -118,7 +116,6 @@ public class Census implements Steppable
 			writer.write( String.valueOf(model.schedule.getSteps()) + ",");
 			writer.write(meanRiskPerception.toString());  
 			writer.write(","+ stDevRiskPerception.toString());
-			writer.write(","+ sD.toString());
 			writer.write(",");
 		}
 		catch (IOException e) {
