@@ -34,7 +34,7 @@ public class Saar extends SimState
 	private String networkType; 
 	private String riskManagerBehavior;
 	private String mediaBehavior;
-	private Double objectiveRisk;
+	private DoubleBag objectiveRisks;
 	private int eventMemory;
 	public ec.util.MersenneTwisterFast randomGenerator;
 	public Census census;
@@ -49,8 +49,8 @@ public class Saar extends SimState
 	public void setRiskManagerBehavior(String riskManagerBehavior) { this.riskManagerBehavior = riskManagerBehavior; }
 	public String getMediaBehavior() { return mediaBehavior; }
 	public void setMediaBehavior(String mediaBehavior) { this.mediaBehavior = mediaBehavior; }
-	public Double getObjectiveRisk() { return objectiveRisk; }
-	public void setObjectiveRisk(Double objectiveRisk) { this.objectiveRisk = objectiveRisk; }
+	public DoubleBag getObjectiveRisks() { return objectiveRisks; }
+	public void setObjectiveRisks(DoubleBag objectiveRisk) { this.objectiveRisks = objectiveRisk; }
 	public int getEventMemory() { return eventMemory; }
 	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
 	public Double getMeanRiskPerception() { return census.getMeanRiskPerception() ; } 
@@ -60,13 +60,14 @@ public class Saar extends SimState
 	 * @param seed
 	 */
 	
-	public Saar(long seed, String NetworkType, Double ObjectiveRisk, int NumCitizens, int EventMemory) {
+	public Saar(long seed, String NetworkType, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory) {
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
 		friends = new Network(false);
 		networkType = NetworkType;
-		objectiveRisk = ObjectiveRisk;
+		objectiveRisks = new DoubleBag();
+		objectiveRisks.add(ObjectiveFirstRisk);
 		numCitizens = NumCitizens;
 		eventMemory = EventMemory;
 	}
@@ -134,8 +135,8 @@ public class Saar extends SimState
 		int xPos = 1;
 		int yPos = 0;
 		Double initialRisk = 0.0;
-		Double lowerRiskBound = objectiveRisk * 0.95;
-		Double riskInterval = objectiveRisk * 0.1;
+		Double lowerRiskBound = objectiveRisks.get(0) * 0.95;
+		Double riskInterval = objectiveRisks.get(0) * 0.1;
 		for(int i = 0; i < numCitizens; i++)
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
@@ -174,7 +175,7 @@ public class Saar extends SimState
 		}		
 		
 		census.log("Event Memory: " + eventMemory + " ");
-		census.log("Objective Risk: " + objectiveRisk + " ");
+		census.log("Objective Risk: " + objectiveRisks.getValue(0) + " ");
 	
 	}
 	
@@ -280,7 +281,23 @@ public class Saar extends SimState
 		}
 		return null;
 	}
-
-
-
+	
+	/**
+	 * 
+	 * @param riskType
+	 * @return
+	 */
+	public Double getObjectiveRisk(int riskType)
+	{
+		try {
+			return objectiveRisks.get(riskType);
+		}
+		catch (Exception e)
+		{
+			// TODO: handle this better
+			return 0.0;
+		}
+		
+	}
+	
 }

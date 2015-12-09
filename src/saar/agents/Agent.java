@@ -4,7 +4,7 @@ import saar.Message;
 import saar.Saar;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.Bag;
+import sim.util.*;
 
 public class Agent implements Steppable {
 
@@ -21,21 +21,46 @@ public class Agent implements Steppable {
 	protected Saar model;
 	protected Bag incomingQueue;
 	protected Bag outgoingQueue;
-	protected Double riskPerception;
+	protected DoubleBag riskPerceptions;
 
-	public Double getRiskPerception() {return riskPerception;}
+	public DoubleBag getRiskPerceptions() {return riskPerceptions;}
 	public int getAgentID() {return agentID;}
-
 	
+	/**
+	 * 
+	 */
 	public Agent() {
 		super();
+		initAgent(0); // TODO: determine ID here
 	}
+	
+	/**
+	 * 
+	 * @param iD
+	 */
+	public Agent(int iD) {
+		super();
+		initAgent(iD);
+	}
+	
+	/**
+	 * 
+	 */
+	public void initAgent(int iD)
+	{
+		agentID = iD;
+		incomingQueue = new Bag();
+		outgoingQueue = new Bag(); 
+		riskPerceptions = new DoubleBag();
+	}
+	
+	
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-	// Behavior  
-	//
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Behavior  
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	/**
@@ -46,6 +71,24 @@ public class Agent implements Steppable {
 		// TODO: why get state here and not in constructor ?
 		model = (Saar) state;
 	}
+	
+	/**
+	 * 
+	 * @param riskType
+	 * @return
+	 */
+	public double getRiskPerception(int riskType)
+	{
+		try { 
+			return riskPerceptions.get(riskType);
+		}
+		catch ( Exception e )
+		{
+			// TODO: handle this better
+			return 0.0;
+		}
+		
+	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -53,7 +96,7 @@ public class Agent implements Steppable {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	/*
+	/**
 	 * 
 	 */
 	protected void processMessages()
@@ -62,7 +105,7 @@ public class Agent implements Steppable {
 			processMessage((Message) incomingQueue.pop());
 	}
 	
-	/*
+	/**
 	 * 
 	 * @param message
 	 */

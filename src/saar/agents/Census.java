@@ -94,13 +94,13 @@ public class Census implements Steppable
 		// calculate average risk perception and its standard deviation (wellford algorithm)
 		Bag citizens = new Bag(model.getFriends().getAllNodes());
 		int numberOfCitizens = citizens.size();
-		meanRiskPerception = ((Citizen) citizens.get(0)).getRiskPerception();
+		meanRiskPerception = ((Citizen) citizens.get(0)).getRiskPerception(0);
 		Double value;
 		Double mCurrent = 0.0;
 		Double sD = 0.0;
 		Double mPrevious = meanRiskPerception;
 		for(int i = 1 ; i < numberOfCitizens ; i++) {
-			value = ((Citizen) citizens.get(i)).getRiskPerception();
+			value = ((Citizen) citizens.get(i)).getRiskPerception(0);
 			meanRiskPerception = meanRiskPerception + value;
 			mCurrent = mPrevious + ( value - mPrevious ) / i;
 			sD =  sD + ( value - mPrevious ) * ( value - mCurrent );
