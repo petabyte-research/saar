@@ -9,7 +9,7 @@ package saar.agents;
 import sim.engine.*;
 import sim.field.network.*;
 import sim.util.*;
-import saar.Message;
+import saar.*;
 
 public class Citizen extends Agent  {
 	
@@ -21,21 +21,17 @@ public class Citizen extends Agent  {
 
 	protected static final long serialVersionUID = 1L;
 	
-	private static final int HIGHER = 0;
-	private static final int EQUAL = 1;
-	private static final int LOWER = 2; 
+ 
 	
-	protected static final int FLOOD = 0;
-	
+	private int opinionDynamic;
 	private DoubleBag riskSignal;
 	private IntBag rpTotals;
-	int eventMemory; 
+	private int eventMemory; 
 	
 	public Bag getIncomingQueue() { return incomingQueue;}
 	public void setIncomingQueue(Bag incomingQueue) {this.incomingQueue = incomingQueue;}
 	public Bag getOutgoingQueue() {return outgoingQueue;}
 	public void setOutgoingQueue(Bag outgoingQueue) {this.outgoingQueue = outgoingQueue;}
-	//public void setRiskPerception(Double riskPerception) {this.riskPerception = riskPerception;}
 	
 	/**
 	 * 
@@ -79,6 +75,7 @@ public class Citizen extends Agent  {
 	 */
 	private void initCitizen()
 	{
+		opinionDynamic = 0;
 		riskSignal = new DoubleBag();
 		rpTotals = new IntBag(3);
 		for ( int i = 0 ; i < 3 ; i++ )
@@ -102,21 +99,30 @@ public class Citizen extends Agent  {
 		// reset risk signal
 		riskSignal.clear();
 		
-		// check whether the agent experiences or remembers a flood risk event
-		if ( eventMemory >= 0 ) 
+		// check whether the agent experiences or remembers a risk event
+		if ( eventMemory > 0 ) 
 			eventMemory--;
 		else
-			if ( experiencedRiskEvent(FLOOD) ) {
+			if ( experiencedRiskEvent(Saar.FLOOD) ) {
 				eventMemory = model.getEventMemory();
-				riskPerceptions.setValue(FLOOD, 1.0);
+				riskPerceptions.setValue(Saar.FLOOD, 1.0);
 				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
 			}
 			
-		// communicate
-		gossip();
-		processMessages();
-		sendMessages();
-		
+		// communicate with peers. 
+		// method dependent on chosen opinion dynamic
+		switch ( opinionDynamic ) {
+			case ( Saar.ONGGO ):
+				queryFriendsRiskPerception();
+				processMessages(); 
+				break;
+			default:
+				// TODO: determine default opinion dynamic
+				break;
+			
+		}
+		processMessages(); // need to call it twice to make sure all queries are answered
+			
 		// perceive risk
 		perceiveRisk();
 	}
@@ -131,16 +137,17 @@ public class Citizen extends Agent  {
 	{
 		switch ( message.getPerformative() )
 		{
-			case "gossiprequest":
-				// gossip query received; return risk perception in gossip reply
-				Message gossipResponse = new Message(agentID,"gossipresponse");
-				Bag gossipResponseContent = new Bag();
-				gossipResponseContent.add(riskPerceptions.get(FLOOD));
-				gossipResponse.setContent(gossipResponseContent);
-				outgoingQueue.add(gossipResponse);
+			case "rprequest":
+				// risk perception query received; return risk perception in reply
+				Message rpResponse = new Message(agentID,"rpresponse");
+				Bag rpResponseContent = new Bag();
+				for ( int i = 0 ; i < riskPerceptions.size() ; i++)
+					rpResponseContent.add(riskPerceptions.get(i));
+				rpResponse.setContent(rpResponseContent);
+				sendMessage(rpResponse);
 				break;
-			case "gossipresponse":
-				// response to gossip request received; store information in risk signal
+			case "rpresponse":
+				// response to risk perception query received; store information in risk signal
 				riskSignal.add( (Double) message.getContent().get(0));
 				break;
 			default:
@@ -153,17 +160,17 @@ public class Citizen extends Agent  {
 	/**
 	 * 
 	 */
-	public void gossip()
+	public void queryFriendsRiskPerception()
 	{
-		Message gossipRequest = new Message(agentID,"gossiprequest");
+		Message rpRequest = new Message(agentID,"rprequest");
 		
 		// add neighbours to receivers of gossip query
 		Bag neighbours = model.getFriends().getEdgesOut(this);
 		for (int i = 0 ; i < neighbours.size(); i++ ) 
-			gossipRequest.addReceiver( (Citizen) ((Edge) neighbours.get(i)).getOtherNode(this));
+			rpRequest.addReceiver( (Citizen) ((Edge) neighbours.get(i)).getOtherNode(this));
 		
-		// add gossip query to outgoing message queue
-		outgoingQueue.add(gossipRequest);
+		// send gossip query directly (no need to use outgoing queue here) 
+		sendMessage(rpRequest);
 		
 	}
 	
@@ -181,25 +188,25 @@ public class Citizen extends Agent  {
 			// select risk perception of random neighbour
 			Double tmpRiskPerception = riskSignal.get(model.randomGenerator.nextInt(riskSignal.size() ) );
 				
-			// change risk perception with probability based on occurens of lower and higher risk perception
-			int rpTotal = rpTotals.get(HIGHER) + rpTotals.get(EQUAL) + rpTotals.get(LOWER);
+			// change risk perception with probability based on occurens of Saar.LOWER and Saar.HIGHER risk perception
+			int rpTotal = rpTotals.get(Saar.HIGHER) + rpTotals.get(Saar.EQUAL) + rpTotals.get(Saar.LOWER);
 			
-			if ( tmpRiskPerception > riskPerceptions.get(FLOOD) ) {
-				if ( model.randomGenerator.nextDouble() < rpTotals.get(HIGHER) / rpTotal ) 
-					riskPerceptions.setValue(FLOOD, tmpRiskPerception);
-				rpTotals.setValue(HIGHER, (int) rpTotals.getValue(HIGHER) +1 );
+			if ( tmpRiskPerception > riskPerceptions.get(Saar.FLOOD) ) {
+				if ( model.randomGenerator.nextDouble() < rpTotals.get(Saar.HIGHER) / rpTotal ) 
+					riskPerceptions.setValue(Saar.FLOOD, tmpRiskPerception);
+				rpTotals.setValue(Saar.HIGHER, (int) rpTotals.getValue(Saar.HIGHER) +1 );
 			}
 			
-			if ( tmpRiskPerception == riskPerceptions.get(FLOOD) ) {
-				if ( model.randomGenerator.nextDouble() < rpTotals.get(EQUAL) / rpTotal ) 
-					riskPerceptions.setValue(FLOOD, tmpRiskPerception);
-				rpTotals.setValue(EQUAL, (int) rpTotals.getValue(EQUAL) +1 );
+			if ( tmpRiskPerception == riskPerceptions.get(Saar.FLOOD) ) {
+				if ( model.randomGenerator.nextDouble() < rpTotals.get(Saar.EQUAL) / rpTotal ) 
+					riskPerceptions.setValue(Saar.FLOOD, tmpRiskPerception);
+				rpTotals.setValue(Saar.EQUAL, (int) rpTotals.getValue(Saar.EQUAL) +1 );
 			}
 			
-			if ( tmpRiskPerception < riskPerceptions.get(FLOOD) ) {
-				if ( model.randomGenerator.nextDouble() < rpTotals.get(LOWER) / rpTotal ) 
-					riskPerceptions.setValue(FLOOD, tmpRiskPerception);
-				rpTotals.setValue(LOWER, (int) rpTotals.getValue(LOWER) +1 );
+			if ( tmpRiskPerception < riskPerceptions.get(Saar.FLOOD) ) {
+				if ( model.randomGenerator.nextDouble() < rpTotals.get(Saar.LOWER) / rpTotal ) 
+					riskPerceptions.setValue(Saar.FLOOD, tmpRiskPerception);
+				rpTotals.setValue(Saar.LOWER, (int) rpTotals.getValue(Saar.LOWER) +1 );
 			}
 		}
 		

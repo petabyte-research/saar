@@ -27,7 +27,19 @@ public class Saar extends SimState
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private static final long serialVersionUID = 1L;
+	
+	// risk types
+	public static final int FLOOD = 0;
+	
+	// opinion dynamics
+	public static final int ONGGO = 0;
+	
+	// auxiliary
+	public static final int HIGHER = 0;
+	public static final int EQUAL = 1;
+	public static final int LOWER = 2;
 		
+	// properties
 	private Continuous2D area ; 
 	private Network friends;
 	private int numCitizens;
