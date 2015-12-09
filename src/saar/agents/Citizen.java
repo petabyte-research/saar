@@ -24,7 +24,7 @@ public class Citizen extends Agent  {
  
 	
 	private int opinionDynamic;
-	private DoubleBag riskSignal;
+	private Bag riskSignalQueue;
 	private IntBag rpTotals;
 	private int eventMemory; 
 	
@@ -51,8 +51,10 @@ public class Citizen extends Agent  {
 	public Citizen(int id, Double initialFirstRP)
 	{
 		super(id);
-		riskPerceptions.add(initialFirstRP);
 		initCitizen();
+		riskPerceptions.add(initialFirstRP);
+		riskSignalQueue.add( new Bag() );
+		
 	}
 	
 	/**
@@ -63,10 +65,13 @@ public class Citizen extends Agent  {
 	public Citizen(int id, DoubleBag initialRP)
 	{
 		super(id);
-		agentID = id;
-		for ( int i = 0 ; i < initialRP.size() ; i++)
-			riskPerceptions.add(initialRP.get(i));
 		initCitizen();
+		agentID = id;
+		for ( int i = 0 ; i < initialRP.size() ; i++) {
+			riskPerceptions.add(initialRP.get(i));
+			riskSignalQueue.add( new Bag() );
+		}
+	
 	}
 	
 	
@@ -76,7 +81,7 @@ public class Citizen extends Agent  {
 	private void initCitizen()
 	{
 		opinionDynamic = 0;
-		riskSignal = new DoubleBag();
+		riskSignalQueue = new Bag();
 		rpTotals = new IntBag(3);
 		for ( int i = 0 ; i < 3 ; i++ )
 			rpTotals.add(1);
@@ -97,7 +102,8 @@ public class Citizen extends Agent  {
 		super.step(state);
 		
 		// reset risk signal
-		riskSignal.clear();
+		for ( int i = 0 ; i < riskSignalQueue.size() ; i++ )
+			( (Bag) riskSignalQueue.get(i)).clear();
 		
 		// check whether the agent experiences or remembers a risk event
 		if ( eventMemory > 0 ) 
@@ -121,10 +127,22 @@ public class Citizen extends Agent  {
 				break;
 			
 		}
+		
+		// process messages in incoming queue
 		processMessages(); // need to call it twice to make sure all queries are answered
+					
+		// determine risk perception
+		// method dependent on chosen opinion dynamic
+		switch ( opinionDynamic ) {
+			case ( Saar.ONGGO ):
+				calculateOnggoRP();
+				break;
+			default:
+				// TODO: determine default opinion dynamic
+				break;
 			
-		// perceive risk
-		perceiveRisk();
+		}
+		
 	}
 	
 	
@@ -148,7 +166,8 @@ public class Citizen extends Agent  {
 				break;
 			case "rpresponse":
 				// response to risk perception query received; store information in risk signal
-				riskSignal.add( (Double) message.getContent().get(0));
+				for ( int i = 0 ; i < message.getContent().size() ; i++ )
+					riskSignalQueue.add(new RiskSignal(message.getSender(),i,(double) message.getContent().get(i) ));
 				break;
 			default:
 				// TODO: handle unknown performative
@@ -179,14 +198,14 @@ public class Citizen extends Agent  {
 	 * 
 	 */
 		
-	public void perceiveRisk()
+	public void calculateOnggoRP()
 	{
+		Bag riskSignalBag = (Bag) riskSignalQueue.get(0);
 	
-		int riskSignalSize = riskSignal.size();
-		if ( riskSignalSize != 0 ) 
+		if ( riskSignalBag.size() != 0 ) 
 		{ 
 			// select risk perception of random neighbour
-			Double tmpRiskPerception = riskSignal.get(model.randomGenerator.nextInt(riskSignal.size() ) );
+			Double tmpRiskPerception = ((RiskSignal) riskSignalBag.get(model.randomGenerator.nextInt( riskSignalBag.size() ) )).getRisk() ;
 				
 			// change risk perception with probability based on occurens of Saar.LOWER and Saar.HIGHER risk perception
 			int rpTotal = rpTotals.get(Saar.HIGHER) + rpTotals.get(Saar.EQUAL) + rpTotals.get(Saar.LOWER);
