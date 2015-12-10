@@ -31,9 +31,6 @@ public class Saar extends SimState
 	// risk types
 	public static final int FLOOD = 0;
 	
-	// opinion dynamics
-	public static final int ONGGO = 0;
-	
 	// auxiliary
 	public static final int HIGHER = 0;
 	public static final int EQUAL = 1;
@@ -65,9 +62,7 @@ public class Saar extends SimState
 	public void setObjectiveRisks(DoubleBag objectiveRisk) { this.objectiveRisks = objectiveRisk; }
 	public int getEventMemory() { return eventMemory; }
 	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
-	public Double getMeanRiskPerception() { return census.getMeanRiskPerception() ; } 
-	public Double getStDevRiskPerception() { return census.getMeanRiskPerception() ; } 
-	
+		
 	/**
 	 * @param seed
 	 */
@@ -138,7 +133,7 @@ public class Saar extends SimState
 		area.clear();
 		
 		// add Census object for gathering statistics
-		census = new Census();
+		census = new Census(1);
 		census.initializeLogFile();
 		schedule.scheduleRepeating(census);
 		

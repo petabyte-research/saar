@@ -21,6 +21,8 @@ public class Citizen extends Agent  {
 
 	protected static final long serialVersionUID = 1L;
 	
+	// opinion dynamics
+	public static final int ONGGO = 0;	
  
 	
 	private int opinionDynamic;
@@ -118,7 +120,7 @@ public class Citizen extends Agent  {
 		// communicate with peers. 
 		// method dependent on chosen opinion dynamic
 		switch ( opinionDynamic ) {
-			case ( Saar.ONGGO ):
+			case ( ONGGO ):
 				queryFriendsRiskPerception();
 				processMessages(); 
 				break;
@@ -133,8 +135,9 @@ public class Citizen extends Agent  {
 					
 		// determine risk perception
 		// method dependent on chosen opinion dynamic
+		// TODO: see if we can do it all in one switch statement
 		switch ( opinionDynamic ) {
-			case ( Saar.ONGGO ):
+			case ( ONGGO ):
 				calculateOnggoRP();
 				break;
 			default:
