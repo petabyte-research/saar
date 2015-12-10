@@ -8,7 +8,7 @@ import java.text.*;
 import java.io.*;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.Bag;
+import sim.util.*;
 import saar.*;
 
 
@@ -29,21 +29,26 @@ public class Census implements Steppable
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Double meanRiskPerception;
-	private Double stDevRiskPerception;
+	private DoubleBag meanRiskPerception;
+	private DoubleBag stDevRiskPerception;
+	private int numberOfRisks;
 	private String logFileName;
 	private BufferedWriter writer;
 	
-	public Double getMeanRiskPerception() { return meanRiskPerception ; }
-	public Double getStDevRiskPerception() { return stDevRiskPerception ; }
+	public DoubleBag getMeanRiskPerception() { return meanRiskPerception ; }
+	public DoubleBag getStDevRiskPerception() { return stDevRiskPerception ; }
+	public double getMeanRiskPerception( int RiskType ) { return meanRiskPerception.get(RiskType); } 
+	public double getStDevRiskPerception( int RiskType ) { return stDevRiskPerception.get(RiskType); } 
 	
 	/**
 	 * 
+	 * @param NumberOfRisks
 	 */
-	public Census()
+	public Census(int NumberOfRisks)
 	{
-		meanRiskPerception = 0.0;
-		stDevRiskPerception = 0.0;
+		numberOfRisks = NumberOfRisks;
+		meanRiskPerception = new DoubleBag(numberOfRisks);
+		stDevRiskPerception = new DoubleBag(numberOfRisks);
 	}
 	
 	
@@ -92,22 +97,29 @@ public class Census implements Steppable
 		Saar model = (Saar) state;
 			
 		// calculate average risk perception and its standard deviation (wellford algorithm)
-		Bag citizens = new Bag(model.getFriends().getAllNodes());
+		Bag citizens = new Bag(model.getFriends().getAllNodes()); // TODO: check whether this is needed
 		int numberOfCitizens = citizens.size();
-		meanRiskPerception = ((Citizen) citizens.get(0)).getRiskPerception(0);
 		Double value;
-		Double mCurrent = 0.0;
-		Double sD = 0.0;
-		Double mPrevious = meanRiskPerception;
-		for(int i = 1 ; i < numberOfCitizens ; i++) {
-			value = ((Citizen) citizens.get(i)).getRiskPerception(0);
-			meanRiskPerception = meanRiskPerception + value;
-			mCurrent = mPrevious + ( value - mPrevious ) / i;
-			sD =  sD + ( value - mPrevious ) * ( value - mCurrent );
-			mPrevious = mCurrent;
+		Double mCurrent;
+		Double sD;
+		Double mPrevious;
+		
+		for (int n = 1; n < numberOfRisks ; n++) {
+			meanRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
+			mPrevious = meanRiskPerception.get(n);
+			mCurrent = 0.0;
+			sD = 0.0;
+			for(int i = 1 ; i < numberOfCitizens ; i++) {
+				value = ((Citizen) citizens.get(i)).getRiskPerception(n);
+				meanRiskPerception.setValue(n, meanRiskPerception.get(n) + value);
+				mCurrent = mPrevious + ( value - mPrevious ) / i;
+				sD =  sD + ( value - mPrevious ) * ( value - mCurrent );
+				mPrevious = mCurrent;
+			}
+			meanRiskPerception.setValue(n,  meanRiskPerception.get(n)  / numberOfCitizens  ) ;
+			stDevRiskPerception.setValue(n, Math.sqrt( sD/ numberOfCitizens ))  ;
 		}
-		meanRiskPerception = meanRiskPerception / numberOfCitizens;
-		stDevRiskPerception = Math.sqrt( sD/ numberOfCitizens );
+	
 
 		// write data to file
 		try 
