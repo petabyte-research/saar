@@ -72,7 +72,8 @@ public class SaarWithGui extends GUIState {
 			Saar saar = (Saar) state;
 			// tell the portrayals what to portray and how to portray them
 			yardPortrayal.setField( saar.getArea() );
-			yardPortrayal.setPortrayalForAll(new OvalPortrayal2D());
+			AgentPortrayal agentPortrayal = new AgentPortrayal(0);
+			yardPortrayal.setPortrayalForAll(agentPortrayal);
 			
 			buddiesPortrayal.setField( new SpatialNetwork2D( saar.getArea(), saar.getFriends() ) );
 			buddiesPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
@@ -96,7 +97,7 @@ public class SaarWithGui extends GUIState {
 			displayFrame.setTitle("Saar Display");
 			c.registerFrame(displayFrame); // so the frame appears in the "Display" list
 			displayFrame.setVisible(true);
-			display.attach( buddiesPortrayal, "Buddies" );
+			//display.attach( buddiesPortrayal, "Buddies" );
 			display.attach( yardPortrayal, "Area" );
 			
 		}

@@ -170,15 +170,11 @@ public class Citizen extends Agent  {
 			case "rpresponse":
 				// response to risk perception query received; store information in risk signal
 				for ( int i = 0 ; i < message.getContent().size() ; i++ )
-					riskSignalQueue.add(new RiskSignal(message.getSender(),i,RiskSignal.CITIZEN,(double) message.getContent().get(i) ));
-				break;
-			case "riskbroadcast":
-				for ( int i = 0 ; i < message.getContent().size() ; i++ )
-					riskSignalQueue.add(new RiskSignal(message.getSender(),i,RiskSignal.MEDIUM,(double) message.getContent().get(i) ));
+					riskSignalQueue.add(new RiskSignal(message.getSender(),i,(double) message.getContent().get(i) ));
 				break;
 			default:
 				// TODO: handle unknown performative
-				System.out.println("Unknown Performative in Message !!!" + message.getPerformative() + "+" );
+				System.out.println("Unknown Performative in Message !!!");
 				break;
 		}
 	}
@@ -211,13 +207,8 @@ public class Citizen extends Agent  {
 	
 		if ( riskSignalBag.size() != 0 ) 
 		{ 
-			// select risk perception of random citizen neighbour
-			RiskSignal tmpSignal ;
-			Double tmpRiskPerception;
-			do {
-				tmpSignal = (RiskSignal) riskSignalBag.get(model.randomGenerator.nextInt( riskSignalBag.size() ));
-				tmpRiskPerception = tmpSignal.getRisk();
-			} while ( tmpSignal.getSource() != RiskSignal.CITIZEN )  ;
+			// select risk perception of random neighbour
+			Double tmpRiskPerception = ((RiskSignal) riskSignalBag.get(model.randomGenerator.nextInt( riskSignalBag.size() ) )).getRisk() ;
 				
 			// change risk perception with probability based on occurens of Saar.LOWER and Saar.HIGHER risk perception
 			int rpTotal = rpTotals.get(Saar.HIGHER) + rpTotals.get(Saar.EQUAL) + rpTotals.get(Saar.LOWER);
