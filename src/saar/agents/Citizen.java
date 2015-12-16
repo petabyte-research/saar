@@ -172,6 +172,10 @@ public class Citizen extends Agent  {
 				for ( int i = 0 ; i < message.getContent().size() ; i++ )
 					riskSignalQueue.add(new RiskSignal(message.getSender(),i,(double) message.getContent().get(i) ));
 				break;
+			case "riskbroadcast":
+				for ( int i = 0 ; i < message.getContent().size() ; i++ )
+					riskSignalQueue.add(new RiskSignal(message.getSender(),i,(double) message.getContent().get(i) ));
+				break;
 			default:
 				// TODO: handle unknown performative
 				System.out.println("Unknown Performative in Message !!!");
