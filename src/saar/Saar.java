@@ -47,6 +47,7 @@ public class Saar extends SimState
 	private int eventMemory;
 	public ec.util.MersenneTwisterFast randomGenerator;
 	public Census census;
+	public Medium medium;
 	
 	public Continuous2D getArea() { return area;} 
 	public Network getFriends() { return friends;}
@@ -140,7 +141,7 @@ public class Saar extends SimState
 		// add citizens
 		census.log("Creating agents: " + numCitizens + " " );
 		int xPos = 1;
-		int yPos = 0;
+		int yPos = 10;
 		Double initialRisk = 0.0;
 		Double lowerRiskBound = objectiveRisks.get(0) * 0.95;
 		Double riskInterval = objectiveRisks.get(0) * 0.1;
@@ -151,10 +152,10 @@ public class Saar extends SimState
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 
-				xPos = xPos + 3;
+				xPos = xPos + 2;
 			else {
 				xPos = 0;
-				yPos = yPos + 3;
+				yPos = yPos + 2;
 			}
 			area.setObjectLocation(citizen, new Double2D(xPos, yPos));	
 			
@@ -180,6 +181,11 @@ public class Saar extends SimState
 				break;
 				
 		}		
+		
+		// add medium
+		medium = new Medium(-1, Medium.OBJECTIVE);
+		area.setObjectLocation(medium,new Double2D(5,4));
+		schedule.scheduleRepeating(medium);
 		
 		census.log("Event Memory: " + eventMemory + " ");
 		census.log("Objective Risk: " + objectiveRisks.getValue(0) + " ");
