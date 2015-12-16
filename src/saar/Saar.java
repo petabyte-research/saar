@@ -187,6 +187,10 @@ public class Saar extends SimState
 		area.setObjectLocation(medium,new Double2D(5,4));
 		schedule.scheduleRepeating(medium);
 		
+		// place census object visible in gui
+		area.setObjectLocation(census, new Double2D(50, 4));
+		
+	
 		census.log("Event Memory: " + eventMemory + " ");
 		census.log("Objective Risk: " + objectiveRisks.getValue(0) + " ");
 	

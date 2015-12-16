@@ -28,6 +28,10 @@ public class Medium extends Agent {
 	public static final int FOLLOWER = 2;
 	
 	protected int mediaRole;
+	
+	public int getMediaRole() { return mediaRole ; }
+	public void setMediaRole(int MediaRole ) { mediaRole = MediaRole; } 
+	public Object domMediaRole() { return new String[] { "OBJECTIVE", "LEADER_AVERAGE", "FOLLOWER" }; }
 
 	/**
 	 * 
