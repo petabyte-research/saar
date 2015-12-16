@@ -4,11 +4,8 @@
 package saar.ui;
 
 import java.awt.Graphics2D;
-import java.awt.Paint;
-
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
-import saar.Saar;
 import saar.agents.*;
 
 /**
@@ -16,6 +13,15 @@ import saar.agents.*;
  *
  */
 public class AgentPortrayal extends OvalPortrayal2D {
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//Properties and constructors
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	protected static final long serialVersionUID = 1L;
 	
 	protected int colorRiskPerceptionType;
 	
@@ -26,6 +32,15 @@ public class AgentPortrayal extends OvalPortrayal2D {
 		colorRiskPerceptionType = ColorRiskPerceptionType;
 	}
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//Behavior  
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * 
+	 */
 	public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
     {
 		Citizen tmpAgent = null;
