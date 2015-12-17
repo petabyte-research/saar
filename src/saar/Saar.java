@@ -148,7 +148,7 @@ public class Saar extends SimState
 		for(int i = 0; i < numCitizens; i++)
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
-			Citizen citizen = new Citizen(i, initialRisk); 
+			Citizen citizen = new Citizen(i, Citizen.AVERAGE_NETWORK_NEIGHBOUR, initialRisk); 
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 

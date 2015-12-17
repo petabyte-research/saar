@@ -22,7 +22,11 @@ public class Citizen extends Agent  {
 	protected static final long serialVersionUID = 1L;
 	
 	// opinion dynamics
-	public static final int ONGGO = 0;	
+	public static final int DEGROOT = 0;
+	public static final int HEGSELMANN = 1;
+	public static final int DEFFUANT = 2; 
+	public static final int AVERAGE_NETWORK_NEIGHBOUR = 3;
+	public static final int ONGGO = 4;	
  
 	
 	private int opinionDynamic;
@@ -39,10 +43,10 @@ public class Citizen extends Agent  {
 	 * 
 	 * @param id
 	 */
-	public Citizen(int id) 
+	public Citizen(int id, int OpinionDynamic) 
 	{
 		super(id);
-		initCitizen();
+		initCitizen(OpinionDynamic);
 	}
 	
 	/**
@@ -50,13 +54,11 @@ public class Citizen extends Agent  {
 	 * @param id
 	 * @param initialFirstRP
 	 */
-	public Citizen(int id, Double initialFirstRP)
+	public Citizen(int id, int OpinionDynamic, Double initialFirstRP)
 	{
 		super(id);
-		initCitizen();
+		initCitizen(OpinionDynamic);
 		riskPerceptions.add(initialFirstRP);
-		riskSignalQueue.add( new Bag() );
-		
 	}
 	
 	/**
@@ -64,25 +66,22 @@ public class Citizen extends Agent  {
 	 * @param id
 	 * @param initialRP
 	 */
-	public Citizen(int id, DoubleBag initialRP)
+	public Citizen(int id, int OpinionDynamic, DoubleBag initialRP)
 	{
 		super(id);
-		initCitizen();
+		initCitizen(OpinionDynamic);
 		agentID = id;
-		for ( int i = 0 ; i < initialRP.size() ; i++) {
+		for ( int i = 0 ; i < initialRP.size() ; i++) 
 			riskPerceptions.add(initialRP.get(i));
-			riskSignalQueue.add( new Bag() );
-		}
-	
 	}
 	
 	
 	/**
 	 * 
 	 */
-	private void initCitizen()
+	private void initCitizen(int OpinionDynamic)
 	{
-		opinionDynamic = 0;
+		opinionDynamic = OpinionDynamic;
 		riskSignalQueue = new Bag();
 		rpTotals = new IntBag(3);
 		for ( int i = 0 ; i < 3 ; i++ )
@@ -104,8 +103,7 @@ public class Citizen extends Agent  {
 		super.step(state);
 		
 		// reset risk signal
-		for ( int i = 0 ; i < riskSignalQueue.size() ; i++ )
-			( (Bag) riskSignalQueue.get(i)).clear();
+		riskSignalQueue.clear();
 		
 		// check whether the agent experiences or remembers a risk event
 		if ( eventMemory > 0 ) 
@@ -117,15 +115,15 @@ public class Citizen extends Agent  {
 				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
 			} 
 		
+		// decrease risk perception slightly after event memory period (so portrayel will color the agent red instead of yellow)
 		if ( riskPerceptions.get(Saar.FLOOD) == 1.0 )
 			if ( eventMemory == 0 )
 				riskPerceptions.setValue(Saar.FLOOD, 0.99);
 			
-				
-			
 		// communicate with peers. 
 		// method dependent on chosen opinion dynamic
 		switch ( opinionDynamic ) {
+			case ( AVERAGE_NETWORK_NEIGHBOUR ):  
 			case ( ONGGO ):
 				queryFriendsRiskPerception();
 				processMessages(); 
@@ -143,6 +141,9 @@ public class Citizen extends Agent  {
 		// method dependent on chosen opinion dynamic
 		// TODO: see if we can do it all in one switch statement
 		switch ( opinionDynamic ) {
+			case ( AVERAGE_NETWORK_NEIGHBOUR ):
+				calculateRiskSignalAverageRP();
+				break;
 			case ( ONGGO ):
 				calculateOnggoRP();
 				break;
@@ -206,6 +207,30 @@ public class Citizen extends Agent  {
 		
 	}
 	
+	public void calculateRiskSignalAverageRP()
+	{
+		int riskSignalSize = riskSignalQueue.size();
+		
+		// only process risk signal if it contains risk information
+		if ( riskSignalSize > 0 ) {
+			riskPerceptions.clear();
+			rpTotals.clear();
+			RiskSignal riskSignal;
+			
+			// sum risk perceptions per risk type
+			for ( int i = 0 ; i < riskSignalSize ; i++)
+			{ 
+				riskSignal = (RiskSignal) riskSignalQueue.get(i);
+				riskPerceptions.setValue(riskSignal.getRiskType(), riskPerceptions.get(riskSignal.getRiskType()) + riskSignal.getRisk());
+				rpTotals.setValue(riskSignal.getRiskType(), rpTotals.getValue(riskSignal.getRiskType() + 1) );
+			}
+			
+			// calculate average of risk perceptions
+			for ( int i = 0 ; i < riskPerceptions.size() ; i++)
+				riskPerceptions.setValue(i, riskPerceptions.get(i) / rpTotals.get(i) );
+		}
+	}
+	
 	/**
 	 * 
 	 * 
@@ -213,12 +238,11 @@ public class Citizen extends Agent  {
 		
 	public void calculateOnggoRP()
 	{
-		Bag riskSignalBag = (Bag) riskSignalQueue.get(0);
 	
-		if ( riskSignalBag.size() != 0 ) 
+		if ( riskSignalQueue.size() != 0 ) 
 		{ 
 			// select risk perception of random neighbour
-			Double tmpRiskPerception = ((RiskSignal) riskSignalBag.get(model.randomGenerator.nextInt( riskSignalBag.size() ) )).getRisk() ;
+			Double tmpRiskPerception = ((RiskSignal) riskSignalQueue.get(model.randomGenerator.nextInt( riskSignalQueue.size() ) )).getRisk() ;
 				
 			// change risk perception with probability based on occurens of Saar.LOWER and Saar.HIGHER risk perception
 			int rpTotal = rpTotals.get(Saar.HIGHER) + rpTotals.get(Saar.EQUAL) + rpTotals.get(Saar.LOWER);
