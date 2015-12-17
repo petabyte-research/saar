@@ -55,11 +55,15 @@ public class AgentPortrayal extends OvalPortrayal2D {
 		catch (Exception e) {
 				
 		}
-		         	
+		
+				         	
        	if ( riskPerception > objectiveRisk )
-       	{
-       		// risk perception greater then objective risk
-       		paint = new java.awt.Color( (int)  ( riskPerception * 255) , 0, 0);
+       	{ 
+       	// risk perception greater then objective risk
+       		if ( riskPerception < 1.0 )
+       			paint = new java.awt.Color( (int)  ( riskPerception * 255) , 0, 0);
+       		else
+       			paint = new java.awt.Color( 255 , 255, 0);
        	} else 	{
        		paint = new java.awt.Color( 0, 128 , 0 );
        	}

@@ -115,7 +115,13 @@ public class Citizen extends Agent  {
 				eventMemory = model.getEventMemory();
 				riskPerceptions.setValue(Saar.FLOOD, 1.0);
 				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
-			}
+			} 
+		
+		if ( riskPerceptions.get(Saar.FLOOD) == 1.0 )
+			if ( eventMemory == 0 )
+				riskPerceptions.setValue(Saar.FLOOD, 0.99);
+			
+				
 			
 		// communicate with peers. 
 		// method dependent on chosen opinion dynamic
