@@ -21,7 +21,7 @@ public class Citizen extends Agent  {
 
 	protected static final long serialVersionUID = 1L;
 	
-	// opinion dynamics
+	// opinion dynamics constants
 	public static final int DEGROOT = 0;
 	public static final int HEGSELMANN = 1;
 	public static final int DEFFUANT = 2; 

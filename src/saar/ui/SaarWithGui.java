@@ -7,6 +7,9 @@ import sim.portrayal.network.*;
 import sim.portrayal.continuous.*;
 import sim.portrayal.simple.*;
 import javax.swing.*;
+
+import com.beust.jcommander.JCommander;
+
 import java.awt.Color;
 import saar.Saar;
 
@@ -31,8 +34,8 @@ public class SaarWithGui extends GUIState {
 	/**
 	 * 
 	 */
-	public SaarWithGui() { 
-		super(new Saar(System.currentTimeMillis(), "WattsBeta", 0.0001,1000,10));
+	public SaarWithGui(CommandLineArgs commandLineArgs) { 
+		super(new Saar(System.currentTimeMillis(), commandLineArgs));
 	}
 	
 	/**
@@ -50,7 +53,12 @@ public class SaarWithGui extends GUIState {
 	 */
 	public static void main(String[] args)
 	{
-		SaarWithGui vid = new SaarWithGui();
+		// parse arguments. If no arguments are given, defaults from CommandLindArgs Class are used
+		CommandLineArgs commandLineArgs = new CommandLineArgs();
+		new JCommander(commandLineArgs,args);
+
+		// create model and gui
+		SaarWithGui vid = new SaarWithGui(commandLineArgs);
 		Console c = new Console(vid);
 		c.setVisible(true);
 	

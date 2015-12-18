@@ -65,19 +65,37 @@ public class Saar extends SimState
 	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
 		
 	/**
+	 * 
 	 * @param seed
+	 * @param NetworkType
+	 * @param ObjectiveFirstRisk
+	 * @param NumCitizens
+	 * @param EventMemory
 	 */
-	
 	public Saar(long seed, String NetworkType, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory) {
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
 		friends = new Network(false);
-		networkType = NetworkType;
 		objectiveRisks = new DoubleBag();
+		
+		networkType = NetworkType;
 		objectiveRisks.add(ObjectiveFirstRisk);
 		numCitizens = NumCitizens;
 		eventMemory = EventMemory;
+	}
+	
+	public Saar(long seed, CommandLineArgs config) {
+		super(seed);
+		area = new Continuous2D(1.0,100,100);
+		randomGenerator = new MersenneTwisterFast();
+		friends = new Network(false);
+		objectiveRisks = new DoubleBag();
+		
+		networkType = config.networkType;
+		objectiveRisks.add(config.objectiveRisk);
+		numCitizens = config.numCitizens;
+		eventMemory = config.eventMemory;
 	}
 	
 	/**
@@ -86,18 +104,13 @@ public class Saar extends SimState
 	
 	public static void main(String[] args) 
 	{		
-		// parse command line. If no arguments are given, defaults from CommandLindArgs Class are used
+		// parse arguments. If no arguments are given, defaults from CommandLindArgs Class are used
 		CommandLineArgs commandLineArgs = new CommandLineArgs();
 		new JCommander(commandLineArgs,args);
 
-		// create the model
-		String networkType = commandLineArgs.networkType;
-		Double objectiveRisk = commandLineArgs.objectiveRisk;
-		int numCitizens = commandLineArgs.numCitizens;
-		int eventMemory = commandLineArgs.eventMemory;
-		SimState state = new Saar(System.currentTimeMillis(),networkType,objectiveRisk,numCitizens,eventMemory); 
+		// start the model with command line arguments
+		SimState state = new Saar(System.currentTimeMillis(),commandLineArgs);
 		
-		// start the model
 		int numJobs = commandLineArgs.numJobs;
 		int numSteps = commandLineArgs.numSteps;
 		state.nameThread();
