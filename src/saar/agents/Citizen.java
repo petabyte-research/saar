@@ -29,15 +29,12 @@ public class Citizen extends Agent  {
 	public static final int ONGGO = 4;	
  
 	
-	private int opinionDynamic;
+	protected int opinionDynamic;
 	private Bag riskSignalQueue;
 	private IntBag rpTotals;
-	private int eventMemory; 
+	protected int eventMemory; 
 	
-	public Bag getIncomingQueue() { return incomingQueue;}
-	public void setIncomingQueue(Bag incomingQueue) {this.incomingQueue = incomingQueue;}
-	public Bag getOutgoingQueue() {return outgoingQueue;}
-	public void setOutgoingQueue(Bag outgoingQueue) {this.outgoingQueue = outgoingQueue;}
+	public Bag getriskSignalQueue() { return riskSignalQueue;}
 	
 	/**
 	 * 
@@ -104,21 +101,6 @@ public class Citizen extends Agent  {
 		
 		// reset risk signal
 		riskSignalQueue.clear();
-		
-		// check whether the agent experiences or remembers a risk event
-		if ( eventMemory > 0 ) 
-			eventMemory--;
-		else
-			if ( experiencedRiskEvent(Saar.FLOOD) ) {
-				eventMemory = model.getEventMemory();
-				riskPerceptions.setValue(Saar.FLOOD, 1.0);
-				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
-			} 
-		
-		// decrease risk perception slightly after event memory period (so portrayel will color the agent red instead of yellow)
-		if ( riskPerceptions.get(Saar.FLOOD) == 1.0 )
-			if ( eventMemory == 0 )
-				riskPerceptions.setValue(Saar.FLOOD, 0.99);
 			
 		// communicate with peers. 
 		// method dependent on chosen opinion dynamic
@@ -126,31 +108,45 @@ public class Citizen extends Agent  {
 			case ( AVERAGE_NETWORK_NEIGHBOUR ):  
 			case ( ONGGO ):
 				queryFriendsRiskPerception();
-				processMessages(); 
 				break;
 			default:
 				// TODO: determine default opinion dynamic
 				break;
-			
 		}
 		
-		// process messages in incoming queue
-		processMessages(); // need to call it twice to make sure all queries are answered
-					
-		// determine risk perception
-		// method dependent on chosen opinion dynamic
-		// TODO: see if we can do it all in one switch statement
-		switch ( opinionDynamic ) {
-			case ( AVERAGE_NETWORK_NEIGHBOUR ):
-				calculateRiskSignalAverageRP();
-				break;
-			case ( ONGGO ):
-				calculateOnggoRP();
-				break;
-			default:
-				// TODO: determine default opinion dynamic
-				break;
+		processMessages();
+		
+		// check whether the agent experiences or remembers a risk event
+		if ( eventMemory > 0 ) {
+			// agent remembers risk event
+			eventMemory--;
+		}
+		else {
+			// agent has forgotten risk event
+			if ( experiencedRiskEvent(Saar.FLOOD) ) {
+				// If agent experiences risk event, set risk perception and log it
+				eventMemory = model.getEventMemory();
+				riskPerceptions.setValue(Saar.FLOOD, 1.0);
+				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
+			} else   	// decrease risk perception slightly after event memory period (so portrayel will color the agent red instead of yellow)
+				if ( riskPerceptions.get(Saar.FLOOD) == 1.0 )
+					if ( eventMemory == 0 ) 
+						riskPerceptions.setValue(Saar.FLOOD, 0.99);
 			
+			// determine risk perception
+			// method dependent on chosen opinion dynamic
+			switch ( opinionDynamic ) {
+				case ( AVERAGE_NETWORK_NEIGHBOUR ):
+					calculateRiskSignalAverageRP();
+					break;
+				case ( ONGGO ):
+					calculateOnggoRP();
+					break;
+				default:
+					// TODO: determine default opinion dynamic
+					break;
+				
+			}
 		}
 		
 	}
@@ -167,7 +163,8 @@ public class Citizen extends Agent  {
 		{
 			case "rprequest":
 				// risk perception query received; return risk perception in reply
-				Message rpResponse = new Message(agentID,"rpresponse");
+				Message rpResponse = new Message(this,"rpresponse");
+				rpResponse.addReceiver( message.getSender() );
 				Bag rpResponseContent = new Bag();
 				for ( int i = 0 ; i < riskPerceptions.size() ; i++)
 					rpResponseContent.add(riskPerceptions.get(i));
@@ -177,11 +174,11 @@ public class Citizen extends Agent  {
 			case "rpresponse":
 				// response to risk perception query received; store information in risk signal
 				for ( int i = 0 ; i < message.getContent().size() ; i++ )
-					riskSignalQueue.add(new RiskSignal(message.getSender(),i,(double) message.getContent().get(i) ));
+					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i) ));
 				break;
 			case "riskbroadcast":
 				for ( int i = 0 ; i < message.getContent().size() ; i++ )
-					riskSignalQueue.add(new RiskSignal(message.getSender(),i,(double) message.getContent().get(i) ));
+					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i) ));
 				break;
 			default:
 				// TODO: handle unknown performative
@@ -195,7 +192,7 @@ public class Citizen extends Agent  {
 	 */
 	public void queryFriendsRiskPerception()
 	{
-		Message rpRequest = new Message(agentID,"rprequest");
+		Message rpRequest = new Message(this,"rprequest");
 		
 		// add neighbours to receivers of gossip query
 		Bag neighbours = model.getFriends().getEdgesOut(this);
@@ -213,8 +210,8 @@ public class Citizen extends Agent  {
 		
 		// only process risk signal if it contains risk information
 		if ( riskSignalSize > 0 ) {
-			riskPerceptions.clear();
-			rpTotals.clear();
+			resetRiskMentalModel();
+
 			RiskSignal riskSignal;
 			
 			// sum risk perceptions per risk type
@@ -222,7 +219,7 @@ public class Citizen extends Agent  {
 			{ 
 				riskSignal = (RiskSignal) riskSignalQueue.get(i);
 				riskPerceptions.setValue(riskSignal.getRiskType(), riskPerceptions.get(riskSignal.getRiskType()) + riskSignal.getRisk());
-				rpTotals.setValue(riskSignal.getRiskType(), rpTotals.getValue(riskSignal.getRiskType() + 1) );
+				rpTotals.setValue(riskSignal.getRiskType(), rpTotals.get(riskSignal.getRiskType()) + 1) ;
 			}
 			
 			// calculate average of risk perceptions
@@ -278,6 +275,19 @@ public class Citizen extends Agent  {
 			return true;
 		else
 			return false;
+	}
+	
+	/**
+	 * 
+	 */
+	public void resetRiskMentalModel()
+	{
+		for (int i = 0 ; i < riskPerceptions.size() ; i++) 
+			riskPerceptions.setValue(i, 0.0);
+			
+		for ( int i = 0 ; i <= Saar.LOWER ; i++)
+			rpTotals.setValue(i, 0);
+		
 	}
 
 }
