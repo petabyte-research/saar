@@ -43,6 +43,7 @@ public class Saar extends SimState
 	private String networkType; 
 	private String riskManagerBehavior;
 	private String mediaBehavior;
+	private String opinionDynamic;
 	private DoubleBag objectiveRisks;
 	private int eventMemory;
 	public ec.util.MersenneTwisterFast randomGenerator;
@@ -72,7 +73,7 @@ public class Saar extends SimState
 	 * @param NumCitizens
 	 * @param EventMemory
 	 */
-	public Saar(long seed, String NetworkType, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory) {
+	public Saar(long seed, String NetworkType, String OpinionDynamic, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory) {
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
@@ -80,6 +81,7 @@ public class Saar extends SimState
 		objectiveRisks = new DoubleBag();
 		
 		networkType = NetworkType;
+		opinionDynamic = OpinionDynamic;
 		objectiveRisks.add(ObjectiveFirstRisk);
 		numCitizens = NumCitizens;
 		eventMemory = EventMemory;
@@ -93,6 +95,7 @@ public class Saar extends SimState
 		objectiveRisks = new DoubleBag();
 		
 		networkType = config.networkType;
+		opinionDynamic = config.opinionDynamic;
 		objectiveRisks.add(config.objectiveRisk);
 		numCitizens = config.numCitizens;
 		eventMemory = config.eventMemory;
@@ -153,7 +156,20 @@ public class Saar extends SimState
 		schedule.scheduleRepeating(census);
 		
 		// add citizens
-		census.log("Creating agents: " + numCitizens + " " );
+		census.log("Creating agents: " + numCitizens);
+		census.log("Using opinion dynamic: " + opinionDynamic );
+		int agentType;
+		switch ( opinionDynamic ) {
+			case "ONGGO":
+				agentType = Citizen.ONGGO;
+				break;
+			case "DEGROOT":
+				agentType = Citizen.DEGROOT;
+				break;
+			default:
+				agentType = 0; 
+				break;
+		}
 		int xPos = 1;
 		int yPos = 10;
 		Double initialRisk = 0.0;
@@ -162,7 +178,7 @@ public class Saar extends SimState
 		for(int i = 0; i < numCitizens; i++)
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
-			Citizen citizen = new Citizen(i, Citizen.AVERAGE_NETWORK_NEIGHBOUR, initialRisk); 
+			Citizen citizen = new Citizen(i, agentType, initialRisk); 
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 
@@ -180,7 +196,6 @@ public class Saar extends SimState
 		}
 		
 		// create edges in social network
-		census.log("Creating Social Network: ");
 		switch ( networkType ) 
 		{
 			case "Lattice":
@@ -225,7 +240,7 @@ public class Saar extends SimState
 	
 	public void createNetworkLattice()
 	{
-		census.log("Lattice" + " ");
+		census.log("Creating Social Network: Lattice");
 
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected 
 
@@ -244,7 +259,7 @@ public class Saar extends SimState
 	
 	public void createNetworkWattsStrogatz(int degree, double beta) 
 	{
-		census.log("Watts beta" + " ");
+		census.log("Creating Social Network: Watts beta");
 		
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected
 		Bag neighbours = new Bag();

@@ -13,7 +13,10 @@ public class CommandLineArgs {
 	
 	@Parameter(names = { "-t", "-networkType" }, description = "Social Network Type (default WattsBeta)")
 	public String networkType = "WattsBeta";
-	 
+	
+	@Parameter(names = { "-d", "-opinionDynamic" }, description = "Opinion Dynamic (default Onggo)")
+	public String opinionDynamic = "Onggo";
+	 	 
 	@Parameter(names = { "-o", "-objectiveRisk" }, description = "Objective Risk, probability of experiencing risk event (default 0.0001) ")
 	public Double objectiveRisk = 0.0001;
 	

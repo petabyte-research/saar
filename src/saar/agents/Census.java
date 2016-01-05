@@ -176,13 +176,13 @@ public class Census implements Steppable
 		try 
 		{
 			writer.newLine();
-			writer.write( String.valueOf(model.schedule.getSteps()) + ",");
+			writer.write( String.valueOf(model.schedule.getSteps()) );
 			for ( int i = 0 ; i < numberOfRisks ; i++ ) {
-				writer.write(i);
-				writer.write(","+meanRiskPerception.getValue(i).toString());  
-				writer.write(","+ stDevRiskPerception.getValue(i).toString());
-				writer.write(","+ maximumRiskPerception.getValue(i).toString() );
-				writer.write(","+ minimumRiskPerception.getValue(i).toString() );
+				writer.write("," + String.valueOf(i));
+				writer.write("," + meanRiskPerception.getValue(i).toString());  
+				writer.write("," + stDevRiskPerception.getValue(i).toString());
+				writer.write("," + maximumRiskPerception.getValue(i).toString() );
+				writer.write("," + minimumRiskPerception.getValue(i).toString() );
 			}
 		}
 		catch (Exception e) {
@@ -199,7 +199,7 @@ public class Census implements Steppable
 	{
 		System.out.println(logString);
 		try {
-			writer.write(logString);
+			writer.write(","+ logString);
 			writer.flush();
 		}
 		catch (IOException e) {
