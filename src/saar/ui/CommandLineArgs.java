@@ -11,8 +11,8 @@ public class CommandLineArgs {
 	@Parameter(names = { "-s", "-numSteps" }, description = "Number of steps within a job/run (default: 1000) ")
 	public int numSteps = 1000;
 	
-	@Parameter(names = { "-t", "-networkType" }, description = "Social Network Type (default Lattice)")
-	public String networkType = "Lattice";
+	@Parameter(names = { "-t", "-networkType" }, description = "Social Network Type (default WattsBeta)")
+	public String networkType = "WattsBeta";
 	 
 	@Parameter(names = { "-o", "-objectiveRisk" }, description = "Objective Risk, probability of experiencing risk event (default 0.0001) ")
 	public Double objectiveRisk = 0.0001;

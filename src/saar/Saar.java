@@ -108,9 +108,10 @@ public class Saar extends SimState
 		CommandLineArgs commandLineArgs = new CommandLineArgs();
 		new JCommander(commandLineArgs,args);
 
-		// start the model with command line arguments
+		// create the model with command line arguments
 		SimState state = new Saar(System.currentTimeMillis(),commandLineArgs);
 		
+		// start the model
 		int numJobs = commandLineArgs.numJobs;
 		int numSteps = commandLineArgs.numSteps;
 		state.nameThread();
@@ -147,7 +148,7 @@ public class Saar extends SimState
 		area.clear();
 		
 		// add Census object for gathering statistics
-		census = new Census(1);
+		census = new Census(1,objectiveRisks.get(0));
 		census.initializeLogFile();
 		schedule.scheduleRepeating(census);
 		

@@ -46,26 +46,42 @@ public class AgentPortrayal extends OvalPortrayal2D {
 		Citizen tmpAgent = null;
 		double riskPerception = 0.0;
 		double objectiveRisk= 0.0;
+		double riskSpread = 0.0;
+		double riskFraction = 0.0;
+		
 		try {
 		  	tmpAgent = (Citizen) object;
 	       	riskPerception =  tmpAgent.getRiskPerception(colorRiskPerceptionType);
 	       	objectiveRisk = tmpAgent.getModel().getObjectiveRisk(colorRiskPerceptionType);
 	       	paint = new java.awt.Color( 0 , 0, 0);
+	       	
 		}
 		catch (Exception e) {
 				
 		}
 		
-				         	
-       	if ( riskPerception > objectiveRisk )
+		int drawColor;
+      	if ( riskPerception > objectiveRisk )
        	{ 
-       	// risk perception greater then objective risk
-       		if ( riskPerception < 1.0 )
-       			paint = new java.awt.Color( (int)  ( riskPerception * 255) , 0, 0);
+       		if ( riskPerception < 1.0 ) {
+       			
+       	//		riskSpread = tmpAgent.getModel().census.getMaximumRiskPerception(colorRiskPerceptionType) - riskPerception;
+       	//		riskFraction = riskSpread / 
+       			
+       			if ( riskPerception > 1.05 * objectiveRisk )
+           			drawColor = 255;
+           		else
+           			drawColor = 128;
+       			paint = new java.awt.Color( drawColor , 0, 0);
+       		}
        		else
        			paint = new java.awt.Color( 255 , 255, 0);
        	} else 	{
-       		paint = new java.awt.Color( 0, 128 , 0 );
+       		if ( riskPerception > 0.95 * objectiveRisk )
+       			drawColor = 128;
+       		else
+       			drawColor = 255;
+       		paint = new java.awt.Color( 0, drawColor , 0 );
        	}
        	 
        	super.draw(object, graphics, info);  // it'll use the new paint  value

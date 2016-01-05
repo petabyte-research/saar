@@ -26,7 +26,9 @@ public class Agent implements Steppable {
 	public DoubleBag getRiskPerceptions() {return riskPerceptions;}
 	public int getAgentID() {return agentID;}
 	public Saar getModel() { return model ; } 
-	
+	public Bag getIncomingQueue() { return incomingQueue;}
+	public Bag getOutgoingQueue() {return outgoingQueue;}
+		
 	/**
 	 * 
 	 */

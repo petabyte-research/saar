@@ -33,6 +33,7 @@ public class SaarWithGui extends GUIState {
 	
 	/**
 	 * 
+	 * @param commandLineArgs
 	 */
 	public SaarWithGui(CommandLineArgs commandLineArgs) { 
 		super(new Saar(System.currentTimeMillis(), commandLineArgs));
@@ -80,7 +81,7 @@ public class SaarWithGui extends GUIState {
 			Saar saar = (Saar) state;
 			// tell the portrayals what to portray and how to portray them
 			yardPortrayal.setField( saar.getArea() );
-			AgentPortrayal agentPortrayal = new AgentPortrayal(0);
+			AgentPortrayal agentPortrayal = new AgentPortrayal(Saar.FLOOD);
 			yardPortrayal.setPortrayalForAll(agentPortrayal);
 			
 			buddiesPortrayal.setField( new SpatialNetwork2D( saar.getArea(), saar.getFriends() ) );
@@ -93,9 +94,9 @@ public class SaarWithGui extends GUIState {
 			display.repaint();
 		}
 		
-		/**
-		 * 
-		 */
+	/**
+	 * 
+	 */
 		public void init(Controller c)
 		{
 			super.init(c);
