@@ -3,7 +3,7 @@
  */
 package saar;
 
-import saar.agents.Citizen;
+import saar.agents.Agent;
 import sim.util.*;
 
 
@@ -20,7 +20,7 @@ public class Message {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private int messageID;
-	private int sender;
+	private Agent sender;
 	private Bag receivers;
 	private String performative;
 	private Bag content;
@@ -30,7 +30,7 @@ public class Message {
 	public Bag getContent() {	return content;	}
 	public void setContent(Bag content) { this.content = content;}
 	public int getMessageID() {	return messageID;}
-	public int getSender() {	return sender;	}
+	public Agent getSender() {	return sender;	}
 	public String getPerformative() {return performative;}
 	
 	
@@ -38,7 +38,7 @@ public class Message {
 	 * 
 	 */
 	
-	public Message(int newSender, String newPerformative) 
+	public Message(Agent newSender, String newPerformative) 
 	{
 		sender = newSender;
 		performative = newPerformative;
@@ -61,9 +61,9 @@ public class Message {
 	 * @param newCitizen
 	 */
 	
-	public void addReceiver(Citizen newCitizen)
+	public void addReceiver(Agent newReceiver)
 	{
-		receivers.add(newCitizen);
+		receivers.add(newReceiver);
 		
 	}
 
