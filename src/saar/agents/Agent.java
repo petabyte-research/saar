@@ -41,8 +41,9 @@ public class Agent implements Steppable {
 	 * 
 	 * @param iD
 	 */
-	public Agent(int iD) {
+	public Agent(int iD, Saar Model) {
 		super();
+		model = Model;
 		initAgent(iD);
 	}
 	

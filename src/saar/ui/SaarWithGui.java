@@ -12,6 +12,7 @@ import com.beust.jcommander.JCommander;
 
 import java.awt.Color;
 import saar.Saar;
+import saar.agents.*;
 
 
 public class SaarWithGui extends GUIState {
@@ -82,8 +83,8 @@ public class SaarWithGui extends GUIState {
 			// tell the portrayals what to portray and how to portray them
 			yardPortrayal.setField( saar.getArea() );
 			AgentPortrayal agentPortrayal = new AgentPortrayal(Saar.FLOOD);
-			yardPortrayal.setPortrayalForAll(agentPortrayal);
-			
+			yardPortrayal.setPortrayalForClass( Citizen.class , agentPortrayal);
+						
 			buddiesPortrayal.setField( new SpatialNetwork2D( saar.getArea(), saar.getFriends() ) );
 			buddiesPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
 

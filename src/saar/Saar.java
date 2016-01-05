@@ -179,7 +179,7 @@ public class Saar extends SimState
 		for(int i = 0; i < numCitizens; i++)
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
-			Citizen citizen = new Citizen(i, agentType, initialRisk); 
+			Citizen citizen = new Citizen(i, this, agentType, initialRisk); 
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 
@@ -213,7 +213,7 @@ public class Saar extends SimState
 		}		
 		
 		// add medium
-		medium = new Medium(-1, Medium.OBJECTIVE);
+		medium = new Medium(-1, this, Medium.OBJECTIVE);
 		area.setObjectLocation(medium,new Double2D(5,4));
 		schedule.scheduleRepeating(medium);
 		

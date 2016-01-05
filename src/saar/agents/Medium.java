@@ -38,9 +38,9 @@ public class Medium extends Agent {
 	 * @param AgentID
 	 * @param MediaRole
 	 */
-	public Medium(int AgentID, int MediaRole) 
+	public Medium(int AgentID, Saar Model, int MediaRole) 
 	{
-		super(AgentID);
+		super(AgentID,Model);
 		initMedia(mediaRole); 
 	}
 
@@ -50,9 +50,9 @@ public class Medium extends Agent {
 	 * @param MediaRole
 	 * @param initialRP
 	 */
-	public Medium(int AgentID, int MediaRole, Double initialRP)
+	public Medium(int AgentID, Saar Model, int MediaRole, Double initialRP)
 	{
-		super(AgentID);
+		super(AgentID,Model);
 		initMedia(mediaRole); 
 		riskPerceptions.add(initialRP);
 	}
@@ -63,9 +63,9 @@ public class Medium extends Agent {
 	 * @param MediaRole
 	 * @param initialRP
 	 */
-	public Medium(int AgentID, int MediaRole, DoubleBag initialRP)
+	public Medium(int AgentID, Saar Model, int MediaRole, DoubleBag initialRP)
 	{
-		super(AgentID);
+		super(AgentID,Model);
 		initMedia(mediaRole); 
 		for ( int i = 0 ; i < initialRP.size() ; i++) 
 			riskPerceptions.add(initialRP.get(i));

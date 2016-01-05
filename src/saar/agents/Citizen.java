@@ -40,9 +40,9 @@ public class Citizen extends Agent  {
 	 * 
 	 * @param id
 	 */
-	public Citizen(int id, int OpinionDynamic) 
+	public Citizen(int id, Saar Model, int OpinionDynamic) 
 	{
-		super(id);
+		super(id,Model);
 		initCitizen(OpinionDynamic);
 	}
 	
@@ -51,9 +51,9 @@ public class Citizen extends Agent  {
 	 * @param id
 	 * @param initialFirstRP
 	 */
-	public Citizen(int id, int OpinionDynamic, Double initialFirstRP)
+	public Citizen(int id, Saar Model, int OpinionDynamic, Double initialFirstRP)
 	{
-		super(id);
+		super(id, Model);
 		initCitizen(OpinionDynamic);
 		riskPerceptions.add(initialFirstRP);
 	}
@@ -63,9 +63,9 @@ public class Citizen extends Agent  {
 	 * @param id
 	 * @param initialRP
 	 */
-	public Citizen(int id, int OpinionDynamic, DoubleBag initialRP)
+	public Citizen(int id, Saar Model, int OpinionDynamic, DoubleBag initialRP)
 	{
-		super(id);
+		super(id, Model);
 		initCitizen(OpinionDynamic);
 		agentID = id;
 		for ( int i = 0 ; i < initialRP.size() ; i++) 

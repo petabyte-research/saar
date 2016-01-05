@@ -67,7 +67,7 @@ public class AgentPortrayal extends OvalPortrayal2D {
 	       			paint = new java.awt.Color( 255 , 255, 0);
 	       	} else 	{
 	       		fraction = ( riskPerception - tmpAgent.getModel().getCensus().getMinimumRiskPerception(colorRiskPerceptionType) ) / tmpAgent.getModel().getCensus().getLowerRiskPerceptionInterval(colorRiskPerceptionType);
-	       		drawColor = (int) ( fraction * 255.0 );
+	       		drawColor = 255 - ((int) ( fraction * 255.0 ));
 	   			paint = new java.awt.Color( 0, drawColor , 0 );
 	       	}
       	}
