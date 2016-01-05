@@ -46,9 +46,9 @@ public class Saar extends SimState
 	private String opinionDynamic;
 	private DoubleBag objectiveRisks;
 	private int eventMemory;
+	private Census census;
 	public ec.util.MersenneTwisterFast randomGenerator;
-	public Census census;
-	public Medium medium;
+	private Medium medium;
 	
 	public Continuous2D getArea() { return area;} 
 	public Network getFriends() { return friends;}
@@ -64,6 +64,7 @@ public class Saar extends SimState
 	public void setObjectiveRisks(DoubleBag objectiveRisk) { this.objectiveRisks = objectiveRisk; }
 	public int getEventMemory() { return eventMemory; }
 	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
+	public Census getCensus() { return census; }
 		
 	/**
 	 * 

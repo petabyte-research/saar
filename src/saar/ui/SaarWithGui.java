@@ -87,7 +87,7 @@ public class SaarWithGui extends GUIState {
 			buddiesPortrayal.setField( new SpatialNetwork2D( saar.getArea(), saar.getFriends() ) );
 			buddiesPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
 
-					// reschedule the displayer
+			// reschedule the displayer
 			display.reset();
 			display.setBackdrop(Color.white);
 			// redraw the display

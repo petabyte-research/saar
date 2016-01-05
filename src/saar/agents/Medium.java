@@ -119,14 +119,14 @@ public class Medium extends Agent {
 				break;
 			case LEADER_AVERAGE: // broadcast average of real risk and public risk perception 
 				for ( int i = 0 ; i < riskPerceptions.size() ; i++)
-					rpResponseContent.add( (model.census.getMeanRiskPerception(i) + model.getObjectiveRisk(i)) / 2);
+					rpResponseContent.add( (model.getCensus().getMeanRiskPerception(i) + model.getObjectiveRisk(i)) / 2);
 				break;
 			case FOLLOWER:	 // broadcast public risk perception
 				for ( int i = 0 ; i < riskPerceptions.size() ; i++)
-					rpResponseContent.add(model.census.getMeanRiskPerception(i));
+					rpResponseContent.add(model.getCensus().getMeanRiskPerception(i));
 				break;
 			default:
-				model.census.log("!!! mediaRole not recognized:");
+				model.getCensus().log("!!! mediaRole not recognized:");
 				break;
 		}
 		

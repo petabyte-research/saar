@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import saar.agents.*;
+import saar.*; 
 
 /**
  * @author QuispelL
@@ -46,43 +47,33 @@ public class AgentPortrayal extends OvalPortrayal2D {
 		Citizen tmpAgent = null;
 		double riskPerception = 0.0;
 		double objectiveRisk= 0.0;
-		double riskSpread = 0.0;
-		double riskFraction = 0.0;
-		
+		double fraction = 0.0;
+	
 		try {
 		  	tmpAgent = (Citizen) object;
 	       	riskPerception =  tmpAgent.getRiskPerception(colorRiskPerceptionType);
 	       	objectiveRisk = tmpAgent.getModel().getObjectiveRisk(colorRiskPerceptionType);
 	       	paint = new java.awt.Color( 0 , 0, 0);
 	       	
-		}
+	       	int drawColor;
+	      	if ( riskPerception > objectiveRisk )
+	       	{ 
+	       		if ( riskPerception < 1.0 ) { 
+	       			fraction = (riskPerception - objectiveRisk) / tmpAgent.getModel().getCensus().getUpperRiskPerceptionInterval(colorRiskPerceptionType);
+	       			drawColor = (int) ( fraction * 255.0 );
+	       			paint = new java.awt.Color( drawColor , 0, 0);
+	       		}
+	       		else
+	       			paint = new java.awt.Color( 255 , 255, 0);
+	       	} else 	{
+	       		fraction = ( riskPerception - tmpAgent.getModel().getCensus().getMinimumRiskPerception(colorRiskPerceptionType) ) / tmpAgent.getModel().getCensus().getLowerRiskPerceptionInterval(colorRiskPerceptionType);
+	       		drawColor = (int) ( fraction * 255.0 );
+	   			paint = new java.awt.Color( 0, drawColor , 0 );
+	       	}
+      	}
 		catch (Exception e) {
-				
+			System.out.println(e);
 		}
-		
-		int drawColor;
-      	if ( riskPerception > objectiveRisk )
-       	{ 
-       		if ( riskPerception < 1.0 ) {
-       			
-       	//		riskSpread = tmpAgent.getModel().census.getMaximumRiskPerception(colorRiskPerceptionType) - riskPerception;
-       	//		riskFraction = riskSpread / 
-       			
-       			if ( riskPerception > 1.05 * objectiveRisk )
-           			drawColor = 255;
-           		else
-           			drawColor = 128;
-       			paint = new java.awt.Color( drawColor , 0, 0);
-       		}
-       		else
-       			paint = new java.awt.Color( 255 , 255, 0);
-       	} else 	{
-       		if ( riskPerception > 0.95 * objectiveRisk )
-       			drawColor = 128;
-       		else
-       			drawColor = 255;
-       		paint = new java.awt.Color( 0, drawColor , 0 );
-       	}
        	 
        	super.draw(object, graphics, info);  // it'll use the new paint  value
     }

@@ -127,7 +127,7 @@ public class Citizen extends Agent  {
 				// If agent experiences risk event, set risk perception and log it
 				eventMemory = model.getEventMemory();
 				riskPerceptions.setValue(Saar.FLOOD, 1.0);
-				model.census.log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
+				model.getCensus().log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
 			} else   	// decrease risk perception slightly after event memory period (so portrayel will color the agent red instead of yellow)
 				if ( riskPerceptions.get(Saar.FLOOD) == 1.0 )
 					if ( eventMemory == 0 ) 

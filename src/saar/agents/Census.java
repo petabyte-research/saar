@@ -169,6 +169,7 @@ public class Census implements Steppable
 			}
 		} 
 		catch (Exception e ) {
+			System.out.println("Census Calculation Error !!!");
 			System.out.println(e);
 		}
 	
