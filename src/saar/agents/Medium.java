@@ -110,7 +110,7 @@ public class Medium extends Agent {
 	 */
 	public void broadcast()
 	{
-		Message broadcastMessage = new Message(agentID, "riskbroadcast");
+		Message broadcastMessage = new Message(this, "riskbroadcast");
 		Bag rpResponseContent = new Bag();
 		switch ( mediaRole ) {
 			case OBJECTIVE:  // broadcast real risk
