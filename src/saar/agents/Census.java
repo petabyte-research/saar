@@ -31,7 +31,13 @@ public class Census implements Steppable
 	
 	private DoubleBag meanRiskPerception;
 	private DoubleBag stDevRiskPerception;
+	private DoubleBag maximumRiskPerception;
+	private DoubleBag minimumRiskPerception; 
+	private DoubleBag upperRiskPerceptionInterval;
+	private DoubleBag lowerRiskPerceptionInterval;
 	private int numberOfRisks;
+	private Double objectiveRisk;
+
 	private String logFileName;
 	private BufferedWriter writer;
 	
@@ -39,17 +45,41 @@ public class Census implements Steppable
 	public DoubleBag getStDevRiskPerception() { return stDevRiskPerception ; }
 	public double getMeanRiskPerception( int RiskType ) { return meanRiskPerception.get(RiskType); } 
 	public double getStDevRiskPerception( int RiskType ) { return stDevRiskPerception.get(RiskType); } 
+	public double getMaximumRiskPerception( int RiskType ) { return maximumRiskPerception.get(RiskType); } 
+	public double getMinimumRiskPerception( int RiskType ) { return minimumRiskPerception.get(RiskType); } 
+	public double getUpperRiskPerceptionInterval( int RiskType ) { return upperRiskPerceptionInterval.get(RiskType ); }
+	public double getLowerRiskPerceptionInterval( int RiskType ) { return lowerRiskPerceptionInterval.get(RiskType ); }
 	
 	/**
 	 * 
 	 * @param NumberOfRisks
 	 */
-	public Census(int NumberOfRisks)
+	public Census(int NumberOfRisks, double ObjectiveRisk)
 	{
 		numberOfRisks = NumberOfRisks;
+		objectiveRisk = ObjectiveRisk;
 		meanRiskPerception = new DoubleBag(numberOfRisks);
 		stDevRiskPerception = new DoubleBag(numberOfRisks);
+		maximumRiskPerception = new DoubleBag(numberOfRisks);
+		minimumRiskPerception = new DoubleBag(numberOfRisks);
+		upperRiskPerceptionInterval = new DoubleBag(numberOfRisks);
+		lowerRiskPerceptionInterval = new DoubleBag(numberOfRisks);
+		try {
+			for (int i = 0 ; i < numberOfRisks ; i++ ) {
+				meanRiskPerception.add(0.0);
+				stDevRiskPerception.add(0.0);
+				maximumRiskPerception.add(0.0);
+				minimumRiskPerception.add(0.0);
+				upperRiskPerceptionInterval.add(0.0);
+				lowerRiskPerceptionInterval.add(0.0);
+			}
+		}
+		catch ( Exception e) {
+			System.out.println(e);
+		}
 	}
+	
+	
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,33 +134,58 @@ public class Census implements Steppable
 		Double sD;
 		Double mPrevious;
 		
-		for (int n = 1; n < numberOfRisks ; n++) {
-			meanRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
-			mPrevious = meanRiskPerception.get(n);
-			mCurrent = 0.0;
-			sD = 0.0;
-			for(int i = 1 ; i < numberOfCitizens ; i++) {
-				value = ((Citizen) citizens.get(i)).getRiskPerception(n);
-				meanRiskPerception.setValue(n, meanRiskPerception.get(n) + value);
-				mCurrent = mPrevious + ( value - mPrevious ) / i;
-				sD =  sD + ( value - mPrevious ) * ( value - mCurrent );
-				mPrevious = mCurrent;
+		try {
+			for (int n = 0; n < numberOfRisks ; n++) {
+				// initialize
+				meanRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
+				maximumRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
+				minimumRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
+				mPrevious = meanRiskPerception.get(n);
+				mCurrent = 0.0;
+				sD = 0.0;
+				// get data from all citizens
+				for(int i = 1 ; i < numberOfCitizens ; i++) {
+					value = ((Citizen) citizens.get(i)).getRiskPerception(n);
+					
+					// get min and max if applicable
+					if (minimumRiskPerception.get(n) > value )
+						minimumRiskPerception.setValue(n, value);
+					else
+						if ( maximumRiskPerception.get(n) < value )
+							if ( value != 1.0  )
+								maximumRiskPerception.set(n, value);
+				
+					// get values for mean and stdev calculation
+					meanRiskPerception.setValue(n, meanRiskPerception.get(n) + value);
+					mCurrent = mPrevious + ( value - mPrevious ) / i;
+					sD =  sD + ( value - mPrevious ) * ( value - mCurrent );
+					mPrevious = mCurrent;
+				}
+				// calculate
+				meanRiskPerception.setValue(n,  meanRiskPerception.get(n)  / numberOfCitizens  ) ;
+				stDevRiskPerception.setValue(n, Math.sqrt( sD/ numberOfCitizens ))  ;
+				upperRiskPerceptionInterval.setValue(n, maximumRiskPerception.get(n) - objectiveRisk  ); 
+				lowerRiskPerceptionInterval.setValue(n, objectiveRisk - minimumRiskPerception.get(n) );
 			}
-			meanRiskPerception.setValue(n,  meanRiskPerception.get(n)  / numberOfCitizens  ) ;
-			stDevRiskPerception.setValue(n, Math.sqrt( sD/ numberOfCitizens ))  ;
+		} 
+		catch (Exception e ) {
+			System.out.println(e);
 		}
 	
-
 		// write data to file
 		try 
 		{
 			writer.newLine();
 			writer.write( String.valueOf(model.schedule.getSteps()) + ",");
-			writer.write(meanRiskPerception.toString());  
-			writer.write(","+ stDevRiskPerception.toString());
-			writer.write(",");
+			for ( int i = 0 ; i < numberOfRisks ; i++ ) {
+				writer.write(i);
+				writer.write(","+meanRiskPerception.getValue(i).toString());  
+				writer.write(","+ stDevRiskPerception.getValue(i).toString());
+				writer.write(","+ maximumRiskPerception.getValue(i).toString() );
+				writer.write(","+ minimumRiskPerception.getValue(i).toString() );
+			}
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 				System.out.println(e);
 		}
 		
