@@ -28,6 +28,7 @@ public class Agent implements Steppable {
 	public Saar getModel() { return model ; } 
 	public Bag getIncomingQueue() { return incomingQueue;}
 	public Bag getOutgoingQueue() {return outgoingQueue;}
+	public Double getPrimaryRiskPerception() { return riskPerceptions.get(0); } 
 		
 	/**
 	 * 

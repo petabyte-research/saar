@@ -40,6 +40,7 @@ public class Census implements Steppable
 
 	private String logFileName;
 	private BufferedWriter writer;
+	private int verbosity;
 	
 	public DoubleBag getMeanRiskPerception() { return meanRiskPerception ; }
 	public DoubleBag getStDevRiskPerception() { return stDevRiskPerception ; }
@@ -49,6 +50,10 @@ public class Census implements Steppable
 	public double getMinimumRiskPerception( int RiskType ) { return minimumRiskPerception.get(RiskType); } 
 	public double getUpperRiskPerceptionInterval( int RiskType ) { return upperRiskPerceptionInterval.get(RiskType ); }
 	public double getLowerRiskPerceptionInterval( int RiskType ) { return lowerRiskPerceptionInterval.get(RiskType ); }
+	
+	public int getVerbosity() { return verbosity ; }
+	public void setVerbosity(int Verbosity) { verbosity = Verbosity ; }
+	public Object domVerbosity() { return new String[] { "QUIET", "VERBOSE" }; }
 	
 	/**
 	 * 
@@ -70,9 +75,10 @@ public class Census implements Steppable
 				stDevRiskPerception.add(0.0);
 				maximumRiskPerception.add(0.0);
 				minimumRiskPerception.add(0.0);
-				upperRiskPerceptionInterval.add(0.0);
-				lowerRiskPerceptionInterval.add(0.0);
+				upperRiskPerceptionInterval.add(1 - objectiveRisk);
+				lowerRiskPerceptionInterval.add(1 - objectiveRisk);
 			}
+		verbosity = 1;			
 		}
 		catch ( Exception e) {
 			System.out.println(e);
@@ -152,7 +158,7 @@ public class Census implements Steppable
 						minimumRiskPerception.setValue(n, value);
 					else
 						if ( maximumRiskPerception.get(n) < value )
-							if ( value != 1.0  )
+							if ( value < 0.99  )
 								maximumRiskPerception.set(n, value);
 				
 					// get values for mean and stdev calculation
@@ -190,6 +196,19 @@ public class Census implements Steppable
 				System.out.println(e);
 		}
 		
+		if ( verbosity == 1 ) {
+			System.out.println("-> Step " + String.valueOf(model.schedule.getSteps()) + ":");
+			for ( int i = 0 ; i < numberOfRisks ; i++ ) {
+				System.out.print(String.valueOf(i));
+				System.out.print("," + meanRiskPerception.getValue(i).toString());  
+				System.out.print("," + stDevRiskPerception.getValue(i).toString());
+				System.out.print("," + maximumRiskPerception.getValue(i).toString() );
+				System.out.print("," + minimumRiskPerception.getValue(i).toString() );
+				System.out.print("," + upperRiskPerceptionInterval.getValue(i).toString() );
+				System.out.println("," + lowerRiskPerceptionInterval.getValue(i).toString() );
+			}
+		}
+			
 	}
 	
 	/**
