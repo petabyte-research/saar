@@ -39,6 +39,8 @@ public class Citizen extends Agent  {
 	/**
 	 * 
 	 * @param id
+	 * @param Model
+	 * @param OpinionDynamic
 	 */
 	public Citizen(int id, Saar Model, int OpinionDynamic) 
 	{
@@ -49,6 +51,8 @@ public class Citizen extends Agent  {
 	/**
 	 * 
 	 * @param id
+	 * @param Model
+	 * @param OpinionDynamic
 	 * @param initialFirstRP
 	 */
 	public Citizen(int id, Saar Model, int OpinionDynamic, Double initialFirstRP)
@@ -61,6 +65,8 @@ public class Citizen extends Agent  {
 	/**
 	 * 
 	 * @param id
+	 * @param Model
+	 * @param OpinionDynamic 
 	 * @param initialRP
 	 */
 	public Citizen(int id, Saar Model, int OpinionDynamic, DoubleBag initialRP)
@@ -75,6 +81,7 @@ public class Citizen extends Agent  {
 	
 	/**
 	 * 
+	 *  @param OpinionDynamic
 	 */
 	private void initCitizen(int OpinionDynamic)
 	{
@@ -266,7 +273,7 @@ public class Citizen extends Agent  {
 	}
 	
 	/**
-	 * 
+	 * @param riskType
 	 * @return
 	 */
 	public boolean experiencedRiskEvent(int riskType)
