@@ -22,7 +22,7 @@ public class Agent implements Steppable {
 	protected Bag incomingQueue;
 	protected Bag outgoingQueue;
 	protected DoubleBag riskPerceptions;
-	private Double primaryRiskPerception; // dummy to allow for property inspectors and interval. Real Primary Risk stored riskPerceptions at index saar.getPrimaryRiskType
+	private double primaryRiskPerception; // dummy to allow for property inspectors and interval. Real Primary Risk stored riskPerceptions at index saar.getPrimaryRiskType
 
 	public DoubleBag getRiskPerceptions() {return riskPerceptions;}
 	public void setRiskPerceptions( double newRP ) { riskPerceptions.set(0, newRP ) ; }
@@ -30,9 +30,9 @@ public class Agent implements Steppable {
 	public Saar getModel() { return model ; } 
 	public Bag getIncomingQueue() { return incomingQueue;}
 	public Bag getOutgoingQueue() {return outgoingQueue;}
-	public Double getPrimaryRiskPerception()  { return riskPerceptions.get( model.getPrimaryRiskType() ); } 
-	public void setPrimaryRiskPerception( Double newRP ) { riskPerceptions.set(model.getPrimaryRiskType(),newRP); }
-	public Object domPrimaryRiskPerception() { return new sim.util.Interval(0.0000001,1.0)  ; } // TODO: find out why this does not work
+	public double getPrimaryRiskPerception()  { return riskPerceptions.get( model.getPrimaryRiskType() ); } 
+	public void setPrimaryRiskPerception( double newRP ) { riskPerceptions.set(model.getPrimaryRiskType(),newRP); }
+	public Object domPrimaryRiskPerception() { return new sim.util.Interval(0.0000001,1.0)  ; } 
 	
 	/**
 	 * 
