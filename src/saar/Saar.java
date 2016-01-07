@@ -36,24 +36,31 @@ public class Saar extends SimState
 	public static final int EQUAL = 1;
 	public static final int LOWER = 2;
 		
-	// properties
+	// model properties
 	private Continuous2D area ; 
+	public ec.util.MersenneTwisterFast randomGenerator;
 	private Network friends;
+	private Census census;
+	private Medium medium;
+	
+	// configuration properties
 	private int numCitizens;
+	private int primaryRiskType;
 	private String networkType; 
 	private String riskManagerBehavior;
 	private String mediaBehavior;
 	private String opinionDynamic;
 	private DoubleBag objectiveRisks;
 	private int eventMemory;
-	private Census census;
-	public ec.util.MersenneTwisterFast randomGenerator;
-	private Medium medium;
 	
 	public Continuous2D getArea() { return area;} 
 	public Network getFriends() { return friends;}
+	public Census getCensus() { return census; }
+	
 	public int getNumCitizens() { return numCitizens;}
 	public void setNumCitizens(int numCitizens) { this.numCitizens = numCitizens; }
+	public int getPrimaryRiskType() { return primaryRiskType ; }
+	public void setPrimaryRiskType( int newRiskType ) { primaryRiskType = newRiskType ; } 
 	public String getNetworkType() { return networkType; }
 	public void setNetworkType(String networkType) { this.networkType = networkType; }
 	public String getRiskManagerBehavior() { return riskManagerBehavior; }
@@ -64,7 +71,7 @@ public class Saar extends SimState
 	public void setObjectiveRisks(DoubleBag objectiveRisk) { this.objectiveRisks = objectiveRisk; }
 	public int getEventMemory() { return eventMemory; }
 	public void setEventMemory(int eventMemory) { this.eventMemory = eventMemory; }
-	public Census getCensus() { return census; }
+	
 		
 	/**
 	 * 
@@ -100,6 +107,7 @@ public class Saar extends SimState
 		objectiveRisks.add(config.objectiveRisk);
 		numCitizens = config.numCitizens;
 		eventMemory = config.eventMemory;
+		primaryRiskType = config.primaryRiskType;
 	}
 	
 	/**

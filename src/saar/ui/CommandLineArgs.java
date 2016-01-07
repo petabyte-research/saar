@@ -26,5 +26,8 @@ public class CommandLineArgs {
 	@Parameter(names = { "-m", "-eventMemory" }, description = "Memory for risk event in steps (default: 10) ")
 	public int eventMemory = 10;
 	
+	@Parameter(names = { "-p", "-primaryRiskType" }, description = "Risk type used for statistics and display ")
+	public int primaryRiskType = 0;
+	
 
 }

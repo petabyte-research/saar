@@ -82,7 +82,7 @@ public class SaarWithGui extends GUIState {
 			Saar saar = (Saar) state;
 			// tell the portrayals what to portray and how to portray them
 			yardPortrayal.setField( saar.getArea() );
-			AgentPortrayal agentPortrayal = new AgentPortrayal(Saar.FLOOD);
+			AgentPortrayal agentPortrayal = new AgentPortrayal(saar.getPrimaryRiskType() );
 			yardPortrayal.setPortrayalForClass( Citizen.class , agentPortrayal);
 						
 			buddiesPortrayal.setField( new SpatialNetwork2D( saar.getArea(), saar.getFriends() ) );
