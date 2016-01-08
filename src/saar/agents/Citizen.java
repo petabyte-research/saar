@@ -211,6 +211,10 @@ public class Citizen extends Agent  {
 		
 	}
 	
+	
+	/*
+	 * 
+	 */
 	public void calculateRiskSignalAverageRP()
 	{
 		int riskSignalSize = riskSignalQueue.size();
@@ -238,8 +242,7 @@ public class Citizen extends Agent  {
 	/**
 	 * 
 	 * 
-	 */
-		
+	 */		
 	public void calculateOnggoRP()
 	{
 	

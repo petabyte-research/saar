@@ -36,14 +36,6 @@ public class Agent implements Steppable {
 	
 	/**
 	 * 
-	 */
-	public Agent() {
-		super();
-		initAgent(0); // TODO: determine ID here
-	}
-	
-	/**
-	 * 
 	 * @param iD
 	 */
 	public Agent(int iD, Saar Model) {
@@ -120,7 +112,6 @@ public class Agent implements Steppable {
 	 */
 	protected void processMessage(Message message)
 	{
-		// TODO: design agent interface along with superclass
 		System.out.println(message.getPerformative() );
 	}
 	
@@ -128,19 +119,31 @@ public class Agent implements Steppable {
 	 * 
 	 */
 	protected void sendMessages() {
-		while ( ! outgoingQueue.isEmpty())
-			sendMessage(  (Message) outgoingQueue.pop());
+		
+		try {
+			while ( ! outgoingQueue.isEmpty())
+				sendMessage(  (Message) outgoingQueue.pop());
+		}
+		catch ( Exception e) {
+			System.out.println(e);
+		}
 	}
+			
 	
 	/**
 	 * 
 	 * @param message
 	 */
 	protected void sendMessage(Message message) {
-		// TODO: error handling
-		Bag receivers = message.getReceivers();
-		for ( int i = 0 ; i < receivers.size() ; i++)
-			((Citizen) receivers.get(i)).receiveMessage(message);
+
+		try {
+			Bag receivers = message.getReceivers();
+			for ( int i = 0 ; i < receivers.size() ; i++)
+				((Citizen) receivers.get(i)).receiveMessage(message);
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 	
 	/**
@@ -148,8 +151,13 @@ public class Agent implements Steppable {
 	 * @param message
 	 */
 	public void receiveMessage(Message message) {
-		// TODO: error handling
-		incomingQueue.add(message);
+
+		try {
+			incomingQueue.add(message);
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	

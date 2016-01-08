@@ -15,10 +15,10 @@ public class CommandLineArgs {
 	public String networkType = "WattsBeta";
 	
 	@Parameter(names = { "-d", "-opinionDynamic" }, description = "Opinion Dynamic (default Onggo)")
-	public String opinionDynamic = "Onggo";
+	public String opinionDynamic = "DEGROOT";
 	 	 
 	@Parameter(names = { "-o", "-objectiveRisk" }, description = "Objective Risk, probability of experiencing risk event (default 0.0001) ")
-	public Double objectiveRisk = 0.0001;
+	public Double objectiveRisk = 0.1;
 	
 	@Parameter(names = { "-n", "-numCitizens" }, description = "Number of citizens (default: 1000) ")
 	public int numCitizens = 1000;
