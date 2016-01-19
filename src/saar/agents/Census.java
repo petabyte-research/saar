@@ -90,45 +90,15 @@ public class Census implements Steppable
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
-	//  Methods 
+	//  Behavior
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * 
+	 * @param state 
 	 */
-	public void initializeLogFile()
-	{
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
- 	   	Date date = new Date();
- 	    logFileName = dateFormat.format(date);
-        try {
-             writer = new BufferedWriter(new FileWriter( logFileName + ".log" ));
-             writer.write(logFileName + "\n");
-             writer.newLine();
-             writer.flush();
-         } catch (IOException e) {
-        	 System.out.println(e);
-         }
-	}
-	
-	/**
-	 * 
-	 */
-	public void endSession()
-	{
-		log("\n Job ended.");
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-		Date date = new Date();
-		log( dateFormat.format(date) );
-		
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void step(SimState state)
+	@Override public void step(SimState state)
 	{
 		Saar model = (Saar) state;
 			
@@ -210,6 +180,46 @@ public class Census implements Steppable
 		}
 			
 	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//  Logging 
+	//
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	/**
+	 * 
+	 */
+	public void initializeLogFile()
+	{
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+ 	   	Date date = new Date();
+ 	    logFileName = dateFormat.format(date);
+        try {
+             writer = new BufferedWriter(new FileWriter( logFileName + ".log" ));
+             writer.write(logFileName + "\n");
+             writer.newLine();
+             writer.flush();
+         } catch (IOException e) {
+        	 System.out.println(e);
+         }
+	}
+	
+	/**
+	 * 
+	 */
+	public void endSession()
+	{
+		log("\n Job ended.");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+		Date date = new Date();
+		log( dateFormat.format(date) );
+		
+	}
+	
+	
+	
 	
 	/**
 	 * 

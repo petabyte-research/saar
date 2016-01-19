@@ -102,7 +102,7 @@ public class Citizen extends Agent  {
 	/**
 	 * 
 	 */
-	public void step(SimState state) 
+	@Override public void step(SimState state) 
 	{
 		super.step(state);
 		
@@ -112,7 +112,7 @@ public class Citizen extends Agent  {
 		// communicate with peers. 
 		// method dependent on chosen opinion dynamic
 		switch ( opinionDynamic ) {
-			case ( AVERAGE_NETWORK_NEIGHBOUR ):  
+			case ( DEGROOT ):  
 			case ( ONGGO ):
 				queryFriendsRiskPerception();
 				break;
@@ -143,7 +143,7 @@ public class Citizen extends Agent  {
 			// determine risk perception
 			// method dependent on chosen opinion dynamic
 			switch ( opinionDynamic ) {
-				case ( AVERAGE_NETWORK_NEIGHBOUR ):
+				case ( DEGROOT ):
 					calculateRiskSignalAverageRP();
 					break;
 				case ( ONGGO ):
@@ -157,14 +157,12 @@ public class Citizen extends Agent  {
 		}
 		
 	}
-	
-	
-	
+
 	/**
 	 * 
 	 * @param message
 	 */
-	public void processMessage(Message message)
+	@Override public void processMessage(Message message)
 	{
 		switch ( message.getPerformative() )
 		{
@@ -194,24 +192,13 @@ public class Citizen extends Agent  {
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	public void queryFriendsRiskPerception()
-	{
-		Message rpRequest = new Message(this,"rprequest");
-		
-		// add neighbours to receivers of gossip query
-		Bag neighbours = model.getFriends().getEdgesOut(this);
-		for (int i = 0 ; i < neighbours.size(); i++ ) 
-			rpRequest.addReceiver( (Citizen) ((Edge) neighbours.get(i)).getOtherNode(this));
-		
-		// send gossip query directly (no need to use outgoing queue here) 
-		sendMessage(rpRequest);
-		
-	}
 	
-	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Internal Processing
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	/*
 	 * 
 	 */
@@ -272,6 +259,29 @@ public class Citizen extends Agent  {
 				rpTotals.setValue(Saar.LOWER, (int) rpTotals.getValue(Saar.LOWER) +1 );
 			}
 		}
+		
+	}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Auxiliary
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * 
+	 */
+	public void queryFriendsRiskPerception()
+	{
+		Message rpRequest = new Message(this,"rprequest");
+		
+		// add neighbours to receivers of gossip query
+		Bag neighbours = model.getFriends().getEdgesOut(this);
+		for (int i = 0 ; i < neighbours.size(); i++ ) 
+			rpRequest.addReceiver( (Citizen) ((Edge) neighbours.get(i)).getOtherNode(this));
+		
+		// send gossip query directly (no need to use outgoing queue here) 
+		sendMessage(rpRequest);
 		
 	}
 	

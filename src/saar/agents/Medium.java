@@ -93,7 +93,7 @@ public class Medium extends Agent {
 	 * 
 	 * @param state
 	 */
-	public void step(SimState state) 
+	@Override public void step(SimState state) 
 	{
 		super.step(state);
 		
@@ -104,7 +104,6 @@ public class Medium extends Agent {
 		broadcast();
 	}
 	
-
 	/**
 	 * 
 	 */

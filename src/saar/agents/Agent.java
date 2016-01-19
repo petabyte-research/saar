@@ -36,6 +36,24 @@ public class Agent implements Steppable {
 	
 	/**
 	 * 
+	 * @param riskType
+	 * @return
+	 */
+	public double getRiskPerception(int riskType)
+	{
+		try { 
+			return riskPerceptions.get(riskType);
+		}
+		catch ( Exception e )
+		{
+			// TODO: handle this better
+			return 0.0;
+		}
+		
+	}
+	
+	/**
+	 * 
 	 * @param iD
 	 */
 	public Agent(int iD, Saar Model) {
@@ -53,9 +71,7 @@ public class Agent implements Steppable {
 		incomingQueue = new Bag();
 		outgoingQueue = new Bag(); 
 		riskPerceptions = new DoubleBag();
-	}
-	
-	
+	}	
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -68,29 +84,21 @@ public class Agent implements Steppable {
 	 * 
 	 *  * @param state
 	 */
-	public void step(SimState state) {
+	@Override public void step(SimState state) {
 		// TODO: why get state here and not in constructor ?
 		model = (Saar) state;
 	}
 	
 	/**
 	 * 
-	 * @param riskType
-	 * @return
+	 * @param message
 	 */
-	public double getRiskPerception(int riskType)
+	protected void processMessage(Message message)
 	{
-		try { 
-			return riskPerceptions.get(riskType);
-		}
-		catch ( Exception e )
-		{
-			// TODO: handle this better
-			return 0.0;
-		}
-		
+		System.out.println(message.getPerformative() );
 	}
-
+	
+		
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Communication 
@@ -104,15 +112,6 @@ public class Agent implements Steppable {
 	{
 		while ( ! incomingQueue.isEmpty())
 			processMessage((Message) incomingQueue.pop());
-	}
-	
-	/**
-	 * 
-	 * @param message
-	 */
-	protected void processMessage(Message message)
-	{
-		System.out.println(message.getPerformative() );
 	}
 	
 	/**
