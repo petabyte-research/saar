@@ -158,6 +158,14 @@ public class Agent implements Steppable {
 			System.out.println(e);
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	public void emptyIncomingQueue()
+	{
+		incomingQueue.clear();
+	}
 
 	
 	
