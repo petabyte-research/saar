@@ -59,6 +59,7 @@ public class Saar extends SimState
 	private String opinionDynamic;
 	private DoubleBag objectiveRisks;
 	private int eventMemory;
+	private Double confidence;
 	
 	public Continuous2D getArea() { return area;} 
 	public Network getFriends() { return friends;}
@@ -88,7 +89,7 @@ public class Saar extends SimState
 	 * @param NumCitizens
 	 * @param EventMemory
 	 */
-	public Saar(long seed, String NetworkType, String OpinionDynamic, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory) {
+	public Saar(long seed, String NetworkType, String OpinionDynamic, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory, Double Confidence) {
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
@@ -100,6 +101,8 @@ public class Saar extends SimState
 		objectiveRisks.add(ObjectiveFirstRisk);
 		numCitizens = NumCitizens;
 		eventMemory = EventMemory;
+		confidence = Confidence;
+		
 	}
 	
 	public Saar(long seed, CommandLineArgs config) {
@@ -115,6 +118,7 @@ public class Saar extends SimState
 		numCitizens = config.numCitizens;
 		eventMemory = config.eventMemory;
 		primaryRiskType = config.primaryRiskType;
+		confidence = config.confidence;
 	}
 	
 	/**
@@ -194,7 +198,7 @@ public class Saar extends SimState
 		for(int i = 0; i < numCitizens; i++)
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
-			Citizen citizen = new Citizen(i, this, agentType, initialRisk); 
+			Citizen citizen = new Citizen(i, this, agentType, initialRisk, confidence); 
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 

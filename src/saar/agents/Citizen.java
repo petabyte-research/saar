@@ -37,6 +37,7 @@ public class Citizen extends Agent  {
 	protected int opinionDynamic;
 	private Bag riskSignalQueue;
 	private IntBag rpTotals;
+	private DoubleBag confidenceIntervalVector;
 	protected int eventMemory; 
 	
 	public Bag getriskSignalQueue() { return riskSignalQueue;}
@@ -47,10 +48,10 @@ public class Citizen extends Agent  {
 	 * @param Model
 	 * @param OpinionDynamic
 	 */
-	public Citizen(int id, Saar Model, int OpinionDynamic) 
+	public Citizen(int id, Saar Model, int OpinionDynamic, Double Confidence) 
 	{
 		super(id,Model);
-		initCitizen(OpinionDynamic);
+		initCitizen(OpinionDynamic, Confidence,1);
 	}
 	
 	/**
@@ -60,11 +61,11 @@ public class Citizen extends Agent  {
 	 * @param OpinionDynamic
 	 * @param initialFirstRP
 	 */
-	public Citizen(int id, Saar Model, int OpinionDynamic, Double initialFirstRP)
+	public Citizen(int id, Saar Model, int OpinionDynamic, Double initialFirstRP, Double Confidence)
 	{
 		super(id, Model);
-		initCitizen(OpinionDynamic);
-		riskPerceptions.add(initialFirstRP);
+		initCitizen(OpinionDynamic, Confidence,1);
+		riskPerceptions.setValue(Saar.FLOOD, initialFirstRP);
 	}
 	
 	/**
@@ -74,13 +75,12 @@ public class Citizen extends Agent  {
 	 * @param OpinionDynamic 
 	 * @param initialRP
 	 */
-	public Citizen(int id, Saar Model, int OpinionDynamic, DoubleBag initialRP)
+	public Citizen(int id, Saar Model, int OpinionDynamic, DoubleBag initialRP, Double Confidence)
 	{
 		super(id, Model);
-		initCitizen(OpinionDynamic);
-		agentID = id;
-		for ( int i = 0 ; i < initialRP.size() ; i++) 
-			riskPerceptions.add(initialRP.get(i));
+		initCitizen(OpinionDynamic, Confidence,initialRP.size());
+		for ( int i = Saar.FLOOD ; i < initialRP.size() ; i++) 
+			riskPerceptions.setValue(i,initialRP.get(i));
 	}
 	
 	
@@ -88,13 +88,15 @@ public class Citizen extends Agent  {
 	 * 
 	 *  @param OpinionDynamic
 	 */
-	private void initCitizen(int OpinionDynamic)
+	private void initCitizen(int OpinionDynamic, Double Confidence, int NumberOfRisks)
 	{
 		opinionDynamic = OpinionDynamic;
 		riskSignalQueue = new Bag();
-		rpTotals = new IntBag(3);
-		for ( int i = 0 ; i < 3 ; i++ )
+		confidenceIntervalVector = new DoubleBag(NumberOfRisks);
+		rpTotals = new IntBag(NumberOfRisks);
+		for ( int i = 0 ; i < NumberOfRisks ; i++ )
 			rpTotals.add(1);
+		
 	}
 	
 	
@@ -189,8 +191,8 @@ public class Citizen extends Agent  {
 				// response to risk perception query received; store information in risk signal
 				for ( int i = Saar.FLOOD ; i < message.getContent().size() ; i++ )
 					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i), (Bag ) message.getContent().get(0)  ));
-				break;
 				// TODO: add code to spread risk signal
+				break;
 			default:
 				// TODO: handle unknown performative
 				System.out.println("Unknown Performative in Message !!!");
@@ -210,16 +212,16 @@ public class Citizen extends Agent  {
 	 */
 	public void calculateRiskSignalAverageRP()
 	{
-		int riskSignalSize = riskSignalQueue.size();
+		int riskSignalQueueSize = riskSignalQueue.size();
 		
 		// only process risk signal if it contains risk information
-		if ( riskSignalSize > 0 ) {
+		if ( riskSignalQueueSize > 0 ) {
 			resetRiskMentalModel();
 
 			RiskSignal riskSignal;
 			
 			// sum risk perceptions per risk type
-			for ( int i = 0 ; i < riskSignalSize ; i++)
+			for ( int i = 0 ; i < riskSignalQueueSize ; i++)
 			{ 
 				riskSignal = (RiskSignal) riskSignalQueue.get(i);
 				riskPerceptions.setValue(riskSignal.getRiskType(), riskPerceptions.get(riskSignal.getRiskType()) + riskSignal.getRisk());

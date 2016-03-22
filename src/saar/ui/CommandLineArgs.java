@@ -27,7 +27,10 @@ public class CommandLineArgs {
 	public int eventMemory = 10;
 	
 	@Parameter(names = { "-p", "-primaryRiskType" }, description = "Risk type used for statistics and display ")
-	public int primaryRiskType = 0;
+	public int primaryRiskType = 1;
+	
+	@Parameter(names = { "-c", "-confidenceInterval" }, description = "Confidence Interval used for Bounded Confidence algorithm")
+	public Double confidence = 0.1;
 	
 
 }
