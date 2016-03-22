@@ -16,7 +16,6 @@ import saar.agents.*;
 import saar.ui.*;
 import com.beust.jcommander.*;
 
-
 public class Saar extends SimState
 {
 	

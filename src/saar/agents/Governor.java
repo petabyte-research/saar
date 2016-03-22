@@ -3,14 +3,15 @@ package saar.agents;
 import saar.Saar;
 
 public class Governor extends Agent {
+	
+	protected static final long serialVersionUID = 1L;
 
-	public Governor() {
-		// TODO Auto-generated constructor stub
-	}
-
+	/**
+	 * @param iD
+	 * @param Model
+	 */
 	public Governor(int iD, Saar Model) {
 		super(iD, Model);
-		// TODO Auto-generated constructor stub
 	}
 
 }

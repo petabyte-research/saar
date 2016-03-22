@@ -8,7 +8,7 @@ import sim.portrayal.continuous.*;
 import sim.portrayal.simple.*;
 import javax.swing.*;
 
-import com.beust.jcommander.JCommander;
+import com.beust.jcommander.*;
 
 import java.awt.Color;
 import saar.Saar;

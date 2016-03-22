@@ -11,20 +11,14 @@ import saar.Saar;
  */
 public class Expert extends Agent {
 
-	/**
-	 * 
-	 */
-	public Expert() {
-		// TODO Auto-generated constructor stub
-	}
-
+	protected static final long serialVersionUID = 1L;
+	
 	/**
 	 * @param iD
 	 * @param Model
 	 */
 	public Expert(int iD, Saar Model) {
 		super(iD, Model);
-		// TODO Auto-generated constructor stub
 	}
 
 }
