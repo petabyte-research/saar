@@ -29,7 +29,8 @@ public class Saar extends SimState
 	private static final long serialVersionUID = 1L;
 	
 	// risk types
-	public static final int FLOOD = 0;
+	public static final int NONE = 0;  // Dummy to allow for sending a sentiment vector as content[0] in Message
+	public static final int FLOOD = 1;
 	
 	// auxiliary
 	public static final int HIGHER = 0;

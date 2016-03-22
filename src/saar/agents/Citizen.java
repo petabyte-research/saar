@@ -171,25 +171,26 @@ public class Citizen extends Agent  {
 	{
 		switch ( message.getPerformative() )
 		{
+			// TODO: consider changing performative to static ints and look at other static method possibilities 
 			case "rprequest":
 				// risk perception query received; return risk perception in reply
 				Message rpResponse = new Message(this,"rpresponse");
 				rpResponse.addReceiver( message.getSender() );
 				Bag rpResponseContent = new Bag();
-				for ( int i = 0 ; i < riskPerceptions.size() ; i++)
+				Bag sentiment = new Bag();
+				rpResponseContent.add(sentiment);
+				for ( int i = Saar.FLOOD ; i < riskPerceptions.size() ; i++)
 					rpResponseContent.add(riskPerceptions.get(i));
 				rpResponse.setContent(rpResponseContent);
 				sendMessage(rpResponse);
 				break;
 			case "rpresponse":
-				// response to risk perception query received; store information in risk signal
-				for ( int i = 0 ; i < message.getContent().size() ; i++ )
-					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i) ));
-				break;
 			case "riskbroadcast":
-				for ( int i = 0 ; i < message.getContent().size() ; i++ )
-					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i) ));
+				// response to risk perception query received; store information in risk signal
+				for ( int i = Saar.FLOOD ; i < message.getContent().size() ; i++ )
+					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i), (Bag ) message.getContent().get(0)  ));
 				break;
+				// TODO: add code to spread risk signal
 			default:
 				// TODO: handle unknown performative
 				System.out.println("Unknown Performative in Message !!!");

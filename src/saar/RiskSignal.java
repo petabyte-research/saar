@@ -44,6 +44,7 @@ public class RiskSignal {
 	public double getRisk() { return risk; }
 	public void setRisk(double risk) { this.risk = risk; }
 	public Bag getSentimentVector() { return sentimentVector ; }
+	public void setSentimentVector( Bag SentimentVector ) { sentimentVector = SentimentVector ; } 
 	public double getSentiment ( int sentimentType ) { return (double) sentimentVector.get(sentimentType) ; } 
 
 	/**
@@ -59,6 +60,18 @@ public class RiskSignal {
 		risk = Risk;
 	}
 	
-	
+	/**
+	 * 
+	 * @param SenderID
+	 * @param RiskType
+	 * @param Risk
+	 */
+	public RiskSignal(int SenderID, int RiskType, double Risk, Bag SentimentVector ) { 
+		
+		senderID = SenderID;
+		riskType = RiskType;
+		risk = Risk;
+		sentimentVector = SentimentVector;
+	}
 
 }
