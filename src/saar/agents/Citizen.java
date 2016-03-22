@@ -22,9 +22,7 @@ public class Citizen extends Agent  {
 	// opinion dynamics constants
 	public static final int DEGROOT = 0;
 	public static final int HEGSELMANN = 1;
-	public static final int DEFFUANT = 2; 
-	public static final int AVERAGE_NETWORK_NEIGHBOUR = 3;
-	public static final int ONGGO = 4;	
+	public static final int ONGGO = 10;	
  
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -94,8 +92,12 @@ public class Citizen extends Agent  {
 		riskSignalQueue = new Bag();
 		confidenceIntervalVector = new DoubleBag(NumberOfRisks);
 		rpTotals = new IntBag(NumberOfRisks);
-		for ( int i = 0 ; i < NumberOfRisks ; i++ )
-			rpTotals.add(1);
+		if ( opinionDynamic == DEGROOT )
+			Confidence = 1.0;   // Bounded Confidence Model with unlimited confidence interval (1.0 = max risk) is De Groot Model
+		for ( int i = 0 ; i < (NumberOfRisks + 1) ; i++ ) {
+			rpTotals.setValue(i,1);
+			confidenceIntervalVector.setValue(i, Confidence);
+		}
 		
 	}
 	
@@ -119,26 +121,22 @@ public class Citizen extends Agent  {
 		// communicate with peers. 
 		// method dependent on chosen opinion dynamic
 		switch ( opinionDynamic ) {
-			case ( DEGROOT ):  
-			case ( ONGGO ):
+			default:
 				queryFriendsRiskPerception();
 				break;
-			default:
-				// TODO: determine default opinion dynamic
-				break;
 		}
-		
-		processMessages();
 		
 		// check whether the agent experiences or remembers a risk event
 		if ( eventMemory > 0 ) {
 			// agent remembers risk event
 			eventMemory--;
+			emptyIncomingQueue();
 		}
 		else {
 			// agent has forgotten risk event
 			if ( experiencedRiskEvent(Saar.FLOOD) ) {
 				// If agent experiences risk event, set risk perception and log it
+				emptyIncomingQueue();
 				eventMemory = model.getEventMemory();
 				riskPerceptions.setValue(Saar.FLOOD, 1.0);
 				model.getCensus().log("! Risk Event Experienced by agent " + String.valueOf(agentID) + " ");
@@ -149,15 +147,10 @@ public class Citizen extends Agent  {
 			
 			// determine risk perception
 			// method dependent on chosen opinion dynamic
+			processMessages();
 			switch ( opinionDynamic ) {
-				case ( DEGROOT ):
-					calculateRiskSignalAverageRP();
-					break;
-				case ( ONGGO ):
-					calculateOnggoRP();
-					break;
 				default:
-					// TODO: determine default opinion dynamic
+					calculateAverageOpinion();
 					break;
 				
 			}
@@ -207,31 +200,30 @@ public class Citizen extends Agent  {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/*
-	 * 
-	 */
-	public void calculateRiskSignalAverageRP()
+	public void calculateAverageOpinion()
 	{
 		int riskSignalQueueSize = riskSignalQueue.size();
 		
 		// only process risk signal if it contains risk information
 		if ( riskSignalQueueSize > 0 ) {
 			resetRiskMentalModel();
-
 			RiskSignal riskSignal;
-			
-			// sum risk perceptions per risk type
-			for ( int i = 0 ; i < riskSignalQueueSize ; i++)
-			{ 
+			int riskType;
+			// loop through all risk signals
+			for ( int i = 0 ; i < riskSignalQueueSize ; i++) {
 				riskSignal = (RiskSignal) riskSignalQueue.get(i);
-				riskPerceptions.setValue(riskSignal.getRiskType(), riskPerceptions.get(riskSignal.getRiskType()) + riskSignal.getRisk());
-				rpTotals.setValue(riskSignal.getRiskType(), rpTotals.get(riskSignal.getRiskType()) + 1) ;
+				riskType = riskSignal.getRiskType();
+				// check whether opinion is within confidence interval
+				if ( Math.abs( riskPerceptions.get(riskType) - riskSignal.getRisk() ) < confidenceIntervalVector.get(riskType) ) {
+					riskPerceptions.setValue(riskSignal.getRiskType(), riskPerceptions.get(riskSignal.getRiskType()) + riskSignal.getRisk());
+					rpTotals.setValue(riskSignal.getRiskType(), rpTotals.get(riskSignal.getRiskType()) + 1) ;
+				}
 			}
-			
-			// calculate average of risk perceptions
-			for ( int i = 0 ; i < riskPerceptions.size() ; i++)
-				riskPerceptions.setValue(i, riskPerceptions.get(i) / rpTotals.get(i) );
 		}
+		
+		// calculate average of risk perceptions
+		for ( int i = 0 ; i < riskPerceptions.size() ; i++)
+			riskPerceptions.setValue(i, riskPerceptions.get(i) / rpTotals.get(i) );
 	}
 	
 	/**
