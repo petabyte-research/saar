@@ -154,8 +154,7 @@ public class Census implements Steppable
 		{
 			writer.newLine();
 			writer.write( String.valueOf(model.schedule.getSteps()) );
-			for ( int i = 0 ; i < numberOfRisks ; i++ ) {
-				writer.write("," + String.valueOf(i));
+			for ( int i = 1 ; i < numberOfRisks ; i++ ) {
 				writer.write("," + meanRiskPerception.getValue(i).toString());  
 				writer.write("," + stDevRiskPerception.getValue(i).toString());
 				writer.write("," + maximumRiskPerception.getValue(i).toString() );
@@ -168,7 +167,7 @@ public class Census implements Steppable
 		
 		if ( verbosity == 1 ) {
 			System.out.println("-> Step " + String.valueOf(model.schedule.getSteps()) + ":");
-			for ( int i = 0 ; i < numberOfRisks ; i++ ) {
+			for ( int i = 1 ; i < numberOfRisks ; i++ ) {
 				System.out.print(String.valueOf(i));
 				System.out.print("," + meanRiskPerception.getValue(i).toString());  
 				System.out.print("," + stDevRiskPerception.getValue(i).toString());
