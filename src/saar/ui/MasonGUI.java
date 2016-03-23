@@ -23,11 +23,12 @@ public class MasonGUI extends GUIState {
 	
 	public Display2D display;
 	public JFrame displayFrame;
-	ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
-	NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();
+	protected ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
+	protected NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();
 	
 	public static String getName() { return "Social Amplification and Attenuation of Risk"; }
     public Object getSimulationInspectedObject() { return state; }  // non-volatile; needed to create inspectors
+    protected Saar model;
 	
 	/**
 	 * 
@@ -76,15 +77,15 @@ public class MasonGUI extends GUIState {
 		 */
 		public void setupPortrayals()
 		{
-			Saar saar = (Saar) state;
+			model = (Saar) state;
 			// tell the portrayals what to portray and how to portray them
-			yardPortrayal.setField( saar.getArea() );
-			AgentPortrayal agentPortrayal = new AgentPortrayal(saar.getPrimaryRiskType() );
+			yardPortrayal.setField( model.getArea() );
+			AgentPortrayal agentPortrayal = new AgentPortrayal(model.getPrimaryRiskType() );
 			yardPortrayal.setPortrayalForClass( Citizen.class , agentPortrayal);
 						
-			buddiesPortrayal.setField( new SpatialNetwork2D( saar.getArea(), saar.getFriends() ) );
+			buddiesPortrayal.setField( new SpatialNetwork2D( model.getArea(), model.getFriends() ) );
 			buddiesPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
-
+ 
 			// reschedule the displayer
 			display.reset();
 			display.setBackdrop(Color.white);
@@ -104,9 +105,8 @@ public class MasonGUI extends GUIState {
 			displayFrame.setTitle("Saar Display");
 			c.registerFrame(displayFrame); // so the frame appears in the "Display" list
 			displayFrame.setVisible(true);
-			//display.attach( buddiesPortrayal, "Buddies" );
 			display.attach( yardPortrayal, "Area" );
-			
+						
 		}
 		
 	    /***
