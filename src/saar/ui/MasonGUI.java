@@ -1,6 +1,5 @@
 package saar.ui;
 
-
 import sim.engine.*;
 import sim.display.*;
 import sim.portrayal.network.*;
@@ -14,15 +13,13 @@ import java.awt.Color;
 import saar.Saar;
 import saar.agents.*;
 
-
-public class SaarWithGui extends GUIState {
+public class MasonGUI extends GUIState {
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //Properties, constructors and main
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	
 	public Display2D display;
 	public JFrame displayFrame;
@@ -36,7 +33,7 @@ public class SaarWithGui extends GUIState {
 	 * 
 	 * @param commandLineArgs
 	 */
-	public SaarWithGui(CommandLineArgs commandLineArgs) { 
+	public MasonGUI(CommandLineArgs commandLineArgs) { 
 		super(new Saar(System.currentTimeMillis(), commandLineArgs));
 	}
 	
@@ -44,7 +41,7 @@ public class SaarWithGui extends GUIState {
 	 * 
 	 * @param state
 	 */
-	public SaarWithGui(SimState state) { 
+	public MasonGUI(SimState state) { 
 		super(state); 
 
 	}
@@ -60,7 +57,7 @@ public class SaarWithGui extends GUIState {
 		new JCommander(commandLineArgs,args);
 
 		// create model and gui
-		SaarWithGui vid = new SaarWithGui(commandLineArgs);
+		MasonGUI vid = new MasonGUI(commandLineArgs);
 		Console c = new Console(vid);
 		c.setVisible(true);
 	
