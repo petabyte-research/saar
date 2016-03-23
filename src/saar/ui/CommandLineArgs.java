@@ -18,7 +18,7 @@ public class CommandLineArgs {
 	public String opinionDynamic = "DEGROOT";
 	 	 
 	@Parameter(names = { "-o", "-objectiveRisk" }, description = "Objective Risk, probability of experiencing risk event (default 0.0001) ")
-	public Double objectiveRisk = 0.1;
+	public Double objectiveRisk = 0.0001;
 	
 	@Parameter(names = { "-n", "-numCitizens" }, description = "Number of citizens (default: 1000) ")
 	public int numCitizens = 1000;
@@ -27,10 +27,10 @@ public class CommandLineArgs {
 	public int eventMemory = 10;
 	
 	@Parameter(names = { "-p", "-primaryRiskType" }, description = "Risk type used for statistics and display ")
-	public int primaryRiskType = 1;
+	public int primaryRiskType = 1;  // 0 is not used for risk perception calculations
 	
 	@Parameter(names = { "-c", "-confidenceInterval" }, description = "Confidence Interval used for Bounded Confidence algorithm")
-	public Double confidence = 0.1;
+	public Double confidence = 0.1;  // only used with HEGSELMAN opinion dynamic
 	
 
 }

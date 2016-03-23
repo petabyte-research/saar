@@ -21,7 +21,7 @@ public class Citizen extends Agent  {
 
 	// opinion dynamics constants
 	public static final int DEGROOT = 0;
-	public static final int HEGSELMANN = 1;
+	public static final int HEGSELMAN = 1;
 	public static final int ONGGO = 10;	
  
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
