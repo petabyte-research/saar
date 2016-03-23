@@ -42,9 +42,11 @@ public class AgentTester extends MasonGUI {
 		
 		// change parameters to suit testing
 		commandLineArgs.numCitizens = 15;
+		commandLineArgs.numSteps = 10;
+		commandLineArgs.objectiveRisk = 0.1;
 		
 		// create model and gui
-		MasonGUI vid = new MasonGUI(commandLineArgs);
+		AgentTester vid = new AgentTester(commandLineArgs);
 		Console c = new Console(vid);
 		c.setVisible(true);
 	

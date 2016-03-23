@@ -171,7 +171,7 @@ public class Saar extends SimState
 		area.clear();
 		
 		// add Census object for gathering statistics
-		census = new Census(1,objectiveRisks.get(0));
+		census = new Census(2,objectiveRisks.get(0));
 		census.initializeLogFile();
 		schedule.scheduleRepeating(census);
 		
@@ -180,13 +180,17 @@ public class Saar extends SimState
 		census.log("Using opinion dynamic: " + opinionDynamic );
 		int agentType;
 		switch ( opinionDynamic ) {
-			case "ONGGO":
-				agentType = Citizen.ONGGO;
-				break;
 			case "DEGROOT":
 				agentType = Citizen.DEGROOT;
 				break;
+			case "HEGSELMAN":
+				agentType = Citizen.HEGSELMAN;
+				break;
+			case "ONGGO":
+				agentType = Citizen.ONGGO;
+				break;
 			default:
+				// when no opinion dynamic is given, use the first
 				agentType = 0; 
 				break;
 		}
