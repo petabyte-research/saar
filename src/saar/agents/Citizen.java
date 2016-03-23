@@ -63,7 +63,8 @@ public class Citizen extends Agent  {
 	{
 		super(id, Model);
 		initCitizen(OpinionDynamic, Confidence,1);
-		riskPerceptions.setValue(Saar.FLOOD, initialFirstRP);
+		riskPerceptions.add(0.0);
+		riskPerceptions.add(initialFirstRP);
 	}
 	
 	/**
@@ -90,13 +91,13 @@ public class Citizen extends Agent  {
 	{
 		opinionDynamic = OpinionDynamic;
 		riskSignalQueue = new Bag();
-		confidenceIntervalVector = new DoubleBag(NumberOfRisks);
-		rpTotals = new IntBag(NumberOfRisks);
+		confidenceIntervalVector = new DoubleBag(NumberOfRisks+1);
+		rpTotals = new IntBag(NumberOfRisks+1);
 		if ( opinionDynamic == DEGROOT )
 			Confidence = 1.0;   // Bounded Confidence Model with unlimited confidence interval (1.0 = max risk) is De Groot Model
 		for ( int i = 0 ; i < (NumberOfRisks + 1) ; i++ ) {
-			rpTotals.setValue(i,1);
-			confidenceIntervalVector.setValue(i, Confidence);
+			rpTotals.add(1);
+			confidenceIntervalVector.add(Confidence);
 		}
 		
 	}
@@ -214,16 +215,15 @@ public class Citizen extends Agent  {
 				riskSignal = (RiskSignal) riskSignalQueue.get(i);
 				riskType = riskSignal.getRiskType();
 				// check whether opinion is within confidence interval
-				if ( Math.abs( riskPerceptions.get(riskType) - riskSignal.getRisk() ) < confidenceIntervalVector.get(riskType) ) {
+				if ( Math.abs( riskPerceptions.get(riskType) - riskSignal.getRisk())  < confidenceIntervalVector.get(riskType) ) {
 					riskPerceptions.setValue(riskSignal.getRiskType(), riskPerceptions.get(riskSignal.getRiskType()) + riskSignal.getRisk());
 					rpTotals.setValue(riskSignal.getRiskType(), rpTotals.get(riskSignal.getRiskType()) + 1) ;
 				}
 			}
+			// calculate average of risk perceptions (only needed if risk signal size > 0) 
+			for ( int i = 0 ; i < rpTotals.size() ; i++)
+				riskPerceptions.setValue(i, riskPerceptions.get(i) / rpTotals.get(i) );
 		}
-		
-		// calculate average of risk perceptions
-		for ( int i = 0 ; i < riskPerceptions.size() ; i++)
-			riskPerceptions.setValue(i, riskPerceptions.get(i) / rpTotals.get(i) );
 	}
 	
 	/**
@@ -305,7 +305,7 @@ public class Citizen extends Agent  {
 		for (int i = 0 ; i < riskPerceptions.size() ; i++) 
 			riskPerceptions.setValue(i, 0.0);
 			
-		for ( int i = 0 ; i <= Saar.LOWER ; i++)
+		for ( int i = 0 ; i < rpTotals.size() ; i++)
 			rpTotals.setValue(i, 0);
 		
 	}
