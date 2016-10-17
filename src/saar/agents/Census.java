@@ -190,11 +190,12 @@ public class Census implements Steppable
 	/**
 	 * 
 	 */
-	public void initializeLogFile()
+	public void initializeLogFile(String LogFile)
 	{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
  	   	Date date = new Date();
- 	    logFileName = dateFormat.format(date);
+ 	   	logFileName = LogFile;
+ 	    logFileName += dateFormat.format(date);
         try {
              writer = new BufferedWriter(new FileWriter( logFileName + ".log" ));
              writer.write(logFileName + "\n");
@@ -227,13 +228,13 @@ public class Census implements Steppable
 	public void log(String logString)
 	{
 		System.out.println(logString);
-		try {
+		/*try {
 			writer.write(","+ logString);
 			writer.flush();
 		}
 		catch (IOException e) {
 			System.out.println(e);
-		}
+		}*/
 	}
 	
 	/**

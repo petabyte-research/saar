@@ -60,6 +60,8 @@ public class Saar extends SimState
 	private DoubleBag objectiveRisks;
 	private int eventMemory;
 	private Double confidence;
+	private String logFile;
+	
 	
 	public Continuous2D getArea() { return area;} 
 	public Network getFriends() { return friends;}
@@ -89,7 +91,7 @@ public class Saar extends SimState
 	 * @param NumCitizens
 	 * @param EventMemory
 	 */
-	public Saar(long seed, String NetworkType, String OpinionDynamic, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory, Double Confidence) {
+	public Saar(long seed, String NetworkType, String OpinionDynamic, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory, Double Confidence, String LogFile) {
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
@@ -102,6 +104,7 @@ public class Saar extends SimState
 		numCitizens = NumCitizens;
 		eventMemory = EventMemory;
 		confidence = Confidence;
+		logFile = LogFile;
 		
 	}
 	
@@ -119,6 +122,8 @@ public class Saar extends SimState
 		eventMemory = config.eventMemory;
 		primaryRiskType = config.primaryRiskType;
 		confidence = config.confidence;
+		logFile = config.logFile;
+		
 	}
 	
 	/**
@@ -172,7 +177,8 @@ public class Saar extends SimState
 		
 		// add Census object for gathering statistics
 		census = new Census(2,objectiveRisks.get(0));
-		census.initializeLogFile();
+		if ( !logFile.isEmpty() ) 
+			census.initializeLogFile(logFile);
 		schedule.scheduleRepeating(census);
 		
 		// add citizens
