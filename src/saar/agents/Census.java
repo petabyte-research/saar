@@ -40,8 +40,9 @@ public class Census implements Steppable
 
 	private String logFileName;
 	private BufferedWriter writer;
-	private int verbosity;
-	
+	private Boolean fileLogging;
+	private Boolean consoleLogging;
+
 	public DoubleBag getMeanRiskPerception() { return meanRiskPerception ; }
 	public DoubleBag getStDevRiskPerception() { return stDevRiskPerception ; }
 	public double getMeanRiskPerception( int RiskType ) { return meanRiskPerception.get(RiskType); } 
@@ -51,9 +52,10 @@ public class Census implements Steppable
 	public double getUpperRiskPerceptionInterval( int RiskType ) { return upperRiskPerceptionInterval.get(RiskType ); }
 	public double getLowerRiskPerceptionInterval( int RiskType ) { return lowerRiskPerceptionInterval.get(RiskType ); }
 	
-	public int getVerbosity() { return verbosity ; }
-	public void setVerbosity(int Verbosity) { verbosity = Verbosity ; }
-	public Object domVerbosity() { return new String[] { "QUIET", "VERBOSE" }; }
+	public Boolean getFileLogging() { return fileLogging ; }
+	public void setFileLogging(Boolean FileLogging) { fileLogging = FileLogging ; }
+	public Boolean getConsoleLogging() { return consoleLogging ; }
+	public void setConsoleLogging(Boolean ConsoleLogging) { consoleLogging = ConsoleLogging ; }
 	
 	/**
 	 * 
@@ -78,11 +80,13 @@ public class Census implements Steppable
 				upperRiskPerceptionInterval.add(1 - objectiveRisk);
 				lowerRiskPerceptionInterval.add(1 - objectiveRisk);
 			}
-		verbosity = 1;			
 		}
 		catch ( Exception e) {
 			System.out.println(e);
 		}
+		
+		fileLogging = false;
+		consoleLogging = false;
 	}
 	
 	
@@ -149,23 +153,25 @@ public class Census implements Steppable
 			System.out.println(e);
 		}
 	
-		// write data to file
-		try 
-		{
-			writer.newLine();
-			writer.write( String.valueOf(model.schedule.getSteps()) );
-			for ( int i = 1 ; i < numberOfRisks ; i++ ) {
-				writer.write("," + meanRiskPerception.getValue(i).toString());  
-				writer.write("," + stDevRiskPerception.getValue(i).toString());
-				writer.write("," + maximumRiskPerception.getValue(i).toString() );
-				writer.write("," + minimumRiskPerception.getValue(i).toString() );
+		// write data to file, if required
+		if ( fileLogging )
+			try 
+			{
+				writer.newLine();
+				writer.write( String.valueOf(model.schedule.getSteps()) );
+				for ( int i = 1 ; i < numberOfRisks ; i++ ) {
+					writer.write("," + meanRiskPerception.getValue(i).toString());  
+					writer.write("," + stDevRiskPerception.getValue(i).toString());
+					writer.write("," + maximumRiskPerception.getValue(i).toString() );
+					writer.write("," + minimumRiskPerception.getValue(i).toString() );
+				}
 			}
-		}
-		catch (Exception e) {
-				System.out.println(e);
-		}
+			catch (Exception e) {
+					System.out.println(e);
+			}
 		
-		if ( verbosity == 1 ) {
+		// write data to stdout, if required
+		if ( consoleLogging ) {
 			System.out.println("-> Step " + String.valueOf(model.schedule.getSteps()) + ":");
 			for ( int i = 1 ; i < numberOfRisks ; i++ ) {
 				System.out.print(String.valueOf(i));
@@ -228,13 +234,13 @@ public class Census implements Steppable
 	public void log(String logString)
 	{
 		System.out.println(logString);
-		/*try {
-			writer.write(","+ logString);
-			writer.flush();
-		}
-		catch (IOException e) {
-			System.out.println(e);
-		}*/
+/*			try {
+				writer.write(","+ logString);
+				writer.flush();
+			}
+			catch (IOException e) {
+				System.out.println(e);
+			}*/
 	}
 	
 	/**
