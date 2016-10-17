@@ -120,14 +120,14 @@ public class Citizen extends Agent  {
 		riskSignalQueue.clear();
 			
 		// communicate with peers. 
-		// method dependent on chosen opinion dynamic
+		// method dependent on chosen opinion dynamic, yet to be implemented
 		switch ( opinionDynamic ) {
 			default:
 				queryFriendsRiskPerception();
 				break;
 		}
 		
-		// check whether the agent experiences or remembers a risk event
+		// check whether the agent experiences or remembers a risk event; if so, ignore incoming messages
 		if ( eventMemory > 0 ) {
 			// agent remembers risk event
 			eventMemory--;

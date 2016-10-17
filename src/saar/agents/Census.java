@@ -233,14 +233,16 @@ public class Census implements Steppable
 	 */
 	public void log(String logString)
 	{
-		System.out.println(logString);
-/*			try {
-				writer.write(","+ logString);
-				writer.flush();
-			}
-			catch (IOException e) {
-				System.out.println(e);
-			}*/
+		if ( consoleLogging )
+				System.out.println(logString);
+		if ( fileLogging )
+			try {
+					writer.write(","+ logString);
+					writer.flush();
+				}
+				catch (IOException e) {
+					System.out.println(e);
+				}
 	}
 	
 	/**
