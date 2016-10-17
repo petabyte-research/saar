@@ -73,7 +73,7 @@ public class AgentPortrayal extends OvalPortrayal2D {
 	       	}
       	}
 		catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
 			}
        	 
        	super.draw(object, graphics, info);  // it'll use the new paint  value

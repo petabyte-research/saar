@@ -116,7 +116,6 @@ public class MasonGUI extends GUIState {
 		{
 			super.start();
 			setupPortrayals();
-		
 		}
 		
 		/**

@@ -35,5 +35,7 @@ public class CommandLineArgs {
 	@Parameter(names = { "-l", "-logfile" }, description = "Start word/characters for log file. When omitted, no log file will be used.")
 	public String logFile = ""; // default is to not use a log file
 	
+	@Parameter(names = { "-v", "-verbose" }, description = "Enable logging to stdout. Default is disabled.")
+	public int verbosity = 0; 
 
 }
