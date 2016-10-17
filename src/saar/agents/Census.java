@@ -174,13 +174,13 @@ public class Census implements Steppable
 		if ( consoleLogging ) {
 			System.out.println("-> Step " + String.valueOf(model.schedule.getSteps()) + ":");
 			for ( int i = 1 ; i < numberOfRisks ; i++ ) {
+				System.out.print("Risk ");
 				System.out.print(String.valueOf(i));
-				System.out.print("," + meanRiskPerception.getValue(i).toString());  
-				System.out.print("," + stDevRiskPerception.getValue(i).toString());
-				System.out.print("," + maximumRiskPerception.getValue(i).toString() );
-				System.out.print("," + minimumRiskPerception.getValue(i).toString() );
-				System.out.print("," + upperRiskPerceptionInterval.getValue(i).toString() );
-				System.out.println("," + lowerRiskPerceptionInterval.getValue(i).toString() );
+				System.out.print("; Mean: " + meanRiskPerception.getValue(i).toString());
+				System.out.print(", StDev: " + stDevRiskPerception.getValue(i).toString());
+				System.out.print(", Max: " + maximumRiskPerception.getValue(i).toString());
+				System.out.println(", Min: " + minimumRiskPerception.getValue(i).toString() );
+			
 			}
 		}
 			
