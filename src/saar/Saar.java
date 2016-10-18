@@ -100,6 +100,7 @@ public class Saar extends SimState
 		
 		networkType = NetworkType;
 		opinionDynamic = OpinionDynamic;
+		objectiveRisks.add(0);
 		objectiveRisks.add(ObjectiveFirstRisk);
 		numCitizens = NumCitizens;
 		eventMemory = EventMemory;
@@ -118,6 +119,7 @@ public class Saar extends SimState
 		
 		networkType = config.networkType;
 		opinionDynamic = config.opinionDynamic;
+		objectiveRisks.add(0);
 		objectiveRisks.add(config.objectiveRisk);
 		numCitizens = config.numCitizens;
 		eventMemory = config.eventMemory;
