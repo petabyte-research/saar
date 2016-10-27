@@ -127,7 +127,7 @@ public class Citizen extends Agent  {
 				break;
 		}
 		
-		// check whether the agent experiences or remembers a risk event; if so, ignore incoming messages
+		// check whether the agent remembers a risk event; if so, ignore incoming messages
 		if ( eventMemory > 0 ) {
 			// agent remembers risk event
 			eventMemory--;
@@ -135,8 +135,9 @@ public class Citizen extends Agent  {
 		}
 		else {
 			// agent has forgotten risk event
+			// Check whether agent experiences risk event
 			if ( experiencedRiskEvent(Saar.FLOOD) ) {
-				// If agent experiences risk event, set risk perception and log it
+				// risk event experienced; set risk perception and log it
 				emptyIncomingQueue();
 				eventMemory = model.getEventMemory();
 				riskPerceptions.setValue(Saar.FLOOD, 1.0);
@@ -157,6 +158,10 @@ public class Citizen extends Agent  {
 			}
 		}
 		
+		/*  Decide on actions
+		for ( int i = 0 ; i < decisionRules.size() ; i++ )
+			((DecisionRule) decisionRules.get(i)).execute();*/
+	
 	}
 
 	/**
@@ -182,7 +187,7 @@ public class Citizen extends Agent  {
 				break;
 			case "rpresponse":
 			case "riskbroadcast":
-				// response to risk perception query received; store information in risk signal
+				// broadcast or response to risk perception query received; store information in risk signal queue
 				for ( int i = Saar.FLOOD ; i < message.getContent().size() ; i++ )
 					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i), (Bag ) message.getContent().get(0)  ));
 				// TODO: add code to spread risk signal
@@ -194,6 +199,14 @@ public class Citizen extends Agent  {
 		}
 	}
 	
+	/**
+	 * 
+	 */
+	public void evacuate()
+	{
+		// TODO: implement method
+		System.out.println("!!! Citizen " + agentID + " is evacuating, rp = " + getPrimaryRiskPerception() );
+	}
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -258,7 +271,7 @@ public class Citizen extends Agent  {
 					riskPerceptions.setValue(Saar.FLOOD, tmpRiskPerception);
 				rpTotals.setValue(Saar.LOWER, (int) rpTotals.getValue(Saar.LOWER) +1 );
 			}
-		}
+	}
 		
 	}
 
