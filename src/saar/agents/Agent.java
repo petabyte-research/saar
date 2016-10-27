@@ -2,6 +2,7 @@ package saar.agents;
 
 import saar.Message;
 import saar.Saar;
+import saar.DecisionRule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.*;
@@ -22,6 +23,7 @@ public class Agent implements Steppable {
 	protected Bag incomingQueue;
 	protected Bag outgoingQueue;
 	protected DoubleBag riskPerceptions;
+	protected Bag decisionRules;
 	private double primaryRiskPerception; // dummy to allow for property inspectors and interval. Real Primary Risk stored riskPerceptions at index saar.getPrimaryRiskType
 
 	public DoubleBag getRiskPerceptions() {return riskPerceptions;}
@@ -71,8 +73,9 @@ public class Agent implements Steppable {
 		incomingQueue = new Bag();
 		outgoingQueue = new Bag(); 
 		riskPerceptions = new DoubleBag();
-	}	
-
+		decisionRules = new Bag();
+	}
+	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Behavior  
@@ -167,8 +170,16 @@ public class Agent implements Steppable {
 		incomingQueue.clear();
 	}
 
-	
-	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//Auxiliary
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void addRule(DecisionRule Rule)
+	{
+		decisionRules.add(Rule);
+	}
 	
 
 }

@@ -14,6 +14,7 @@ import sim.field.continuous.*;
 import sim.field.network.*;
 import saar.agents.*;
 import saar.ui.*;
+import saar.*;
 import com.beust.jcommander.*;
 
 public class Saar extends SimState
@@ -214,6 +215,10 @@ public class Saar extends SimState
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
 			Citizen citizen = new Citizen(i, this, agentType, initialRisk, confidence); 
+			
+			// give citizen rules
+			DecisionRule tmpRule = new DecisionRule(citizen,Saar.FLOOD,0.2,"evacuate");
+			citizen.addRule(tmpRule);
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 
