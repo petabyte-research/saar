@@ -158,9 +158,9 @@ public class Citizen extends Agent  {
 			}
 		}
 		
-		/*  Decide on actions
+		//  Decide on actions
 		for ( int i = 0 ; i < decisionRules.size() ; i++ )
-			((DecisionRule) decisionRules.get(i)).execute();*/
+			((DecisionRule) decisionRules.get(i)).execute();
 	
 	}
 

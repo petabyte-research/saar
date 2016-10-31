@@ -130,7 +130,8 @@ public class DecisionRule {
 	{
 		try { 
 			if ( this.evaluate() ) {
-				consequent.invoke(null, null);  // fails; TODO: find out how this should work 
+				
+				consequent.invoke(decider);  
 				return true;
 			}
 			else
@@ -159,7 +160,6 @@ public class DecisionRule {
 		Boolean ret = false;
 		
 		try { 
-			System.out.println(decider.getRiskPerception( antecedents.get(0)) + "(" + antecedents.get(0) + ") -> " + thresholds.get(0)  );
 			// evaluate first antecedent
 			if ( decider.getRiskPerception( antecedents.get(0) ) > thresholds.get(0) )
 				ret = true;
