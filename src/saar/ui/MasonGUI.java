@@ -4,14 +4,16 @@ import sim.engine.*;
 import sim.display.*;
 import sim.portrayal.network.*;
 import sim.portrayal.continuous.*;
-import sim.portrayal.simple.*;
+
 import javax.swing.*;
 
 import com.beust.jcommander.*;
 
-import java.awt.Color;
+import java.awt.BorderLayout;
+
 import saar.Saar;
-import saar.agents.*;
+import saar.ui.panels.AgentPanel;
+import saar.ui.panels.InfoPanel;
 
 public class MasonGUI extends GUIState {
 	
@@ -21,8 +23,10 @@ public class MasonGUI extends GUIState {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public Display2D display;
-	public JFrame displayFrame;
+	private InfoPanel infoPanel;
+	private AgentPanel agentPanel;
+	
+	public JFrame display;
 	protected ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
 	protected NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();
 	
@@ -77,7 +81,7 @@ public class MasonGUI extends GUIState {
 		 */
 		public void setupPortrayals()
 		{
-			model = (Saar) state;
+			/*model = (Saar) state;
 			// tell the portrayals what to portray and how to portray them
 			yardPortrayal.setField( model.getArea() );
 			AgentPortrayal agentPortrayal = new AgentPortrayal(model.getPrimaryRiskType() );
@@ -90,7 +94,7 @@ public class MasonGUI extends GUIState {
 			display.reset();
 			display.setBackdrop(Color.white);
 			// redraw the display
-			display.repaint();
+			display.repaint();*/
 		}
 		
 	/**
@@ -99,13 +103,14 @@ public class MasonGUI extends GUIState {
 		public void init(Controller c)
 		{
 			super.init(c);
-			display = new Display2D(600,600,this);
+			
+			/*display = new Display2D(600,600,this);
 			display.setClipping(false);
 			displayFrame = display.createFrame();
 			displayFrame.setTitle("Saar Display");
 			c.registerFrame(displayFrame); // so the frame appears in the "Display" list
 			displayFrame.setVisible(true);
-			display.attach( yardPortrayal, "Area" );
+			display.attach( yardPortrayal, "Area" );*/
 						
 		}
 		
@@ -115,7 +120,41 @@ public class MasonGUI extends GUIState {
 		public void start()
 		{
 			super.start();
-			setupPortrayals();
+			
+			model = (Saar) state;
+			
+			//---------------SETUP GUI------------------\\
+			//*-- SET FRAME
+			display = new JFrame();
+			display.setSize(1300,750);
+			display.setResizable(false);
+			display.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			//*-- SET PANEL
+			agentPanel = new AgentPanel(display.getWidth()-150,display.getHeight(),model);
+			
+			//*-- SET INFO PANEL
+			infoPanel = new InfoPanel(150,display.getHeight(),model);
+			
+			agentPanel.setPopUpPanel(infoPanel.getPopUpPanel());
+			
+			//*-- DISPLAY GUI
+			display.add(infoPanel,BorderLayout.WEST);
+			display.add(agentPanel,BorderLayout.EAST);
+			display.setVisible(true);
+		}
+		
+		/***
+	     * 
+	     */
+		public boolean step()
+		{
+			boolean b = super.step();
+			
+			agentPanel.step();
+			infoPanel.step();
+			
+			return b;
 		}
 		
 		/**
@@ -124,7 +163,6 @@ public class MasonGUI extends GUIState {
 		public void load(SimState state)
 		{
 			super.load(state);
-			setupPortrayals();
 		}
 		
 		/**
@@ -133,8 +171,7 @@ public class MasonGUI extends GUIState {
 		public void quit()
 		{
 			super.quit();
-			if (displayFrame!=null) displayFrame.dispose();
-			displayFrame = null;
+			if (display!=null) display.dispose();
 			display = null;
 		}
 		

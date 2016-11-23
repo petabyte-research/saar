@@ -25,6 +25,11 @@ public class Medium extends Agent {
 	public static final int LEADER_AVERAGE = 1;
 	public static final int FOLLOWER = 2;
 	
+	public static final String OBJECTIVE_STRING = "Objective";
+	public static final String LEADER_AVERAGE_STRING = "Leader Average";
+	public static final String FOLLOWER_STRING = "Follower";
+	
+	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //Properties and constructors

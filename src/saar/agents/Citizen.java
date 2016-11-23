@@ -10,6 +10,7 @@ import sim.engine.*;
 import sim.field.network.*;
 import sim.util.*;
 import saar.*;
+import saar.ui.*;
 
 public class Citizen extends Agent  {
 	
@@ -23,6 +24,10 @@ public class Citizen extends Agent  {
 	public static final int DEGROOT = 0;
 	public static final int HEGSELMAN = 1;
 	public static final int ONGGO = 10;	
+	
+	public static final String DEGROOT_STRING = "De Groot";
+	public static final String HEGSELMAN_STRING = "Hegselman";
+	public static final String ONGGO_STRING = "Onggo";
  
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -37,6 +42,13 @@ public class Citizen extends Agent  {
 	private IntBag rpTotals;
 	private DoubleBag confidenceIntervalVector;
 	protected int eventMemory; 
+	
+	private CitizenDisplay display;
+	
+	public void setDisplay(CitizenDisplay display){	this.display = display;	}
+	public CitizenDisplay getDisplay(){	return display;	}
+	public void setOpinionDynamic(int dynamic){	this.opinionDynamic = dynamic;	}
+	public int getOpinionDynamic(){	return opinionDynamic;	}
 	
 	public Bag getriskSignalQueue() { return riskSignalQueue;}
 	
@@ -322,6 +334,23 @@ public class Citizen extends Agent  {
 			rpTotals.setValue(i, 0);
 		
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Double getRiskPercentage() 
+	{ 
+		// TODO: remove calculation of percentage from citizen class
+		return (this.getRiskPerception(1)-this.getModel().getCensus().getMinimumRiskPerception(1))
+			/(this.getModel().getCensus().getMaximumRiskPerception(1)-this.getModel().getCensus().getMinimumRiskPerception(1));
+	}
+
 
 }
+
+
+
+
+
 

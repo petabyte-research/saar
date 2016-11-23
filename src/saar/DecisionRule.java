@@ -130,7 +130,6 @@ public class DecisionRule {
 	{
 		try { 
 			if ( this.evaluate() ) {
-				
 				consequent.invoke(decider);  
 				return true;
 			}

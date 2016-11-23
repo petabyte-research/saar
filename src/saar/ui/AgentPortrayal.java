@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import saar.agents.*;
-import saar.*; 
 
 /**
  * @author QuispelL

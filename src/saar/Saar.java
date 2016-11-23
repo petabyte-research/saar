@@ -54,7 +54,8 @@ public class Saar extends SimState
 	// configuration properties
 	private int numCitizens;
 	private int primaryRiskType;
-	private String networkType; 
+	private Double wattsBeta; 
+	private int connectedNeighbours;
 	private String riskManagerBehavior;
 	private String mediaBehavior;
 	private String opinionDynamic;
@@ -67,13 +68,16 @@ public class Saar extends SimState
 	public Continuous2D getArea() { return area;} 
 	public Network getFriends() { return friends;}
 	public Census getCensus() { return census; }
+	public Medium getMedium() { return medium;}
 	
 	public int getNumCitizens() { return numCitizens;}
 	public void setNumCitizens(int numCitizens) { this.numCitizens = numCitizens; }
 	public int getPrimaryRiskType() { return primaryRiskType ; }
 	public void setPrimaryRiskType( int newRiskType ) { primaryRiskType = newRiskType ; } 
-	public String getNetworkType() { return networkType; }
-	public void setNetworkType(String networkType) { this.networkType = networkType; }
+	public int getConnectedNeighbours () { return connectedNeighbours ;}
+	public void setConnectedNeighbours (int ConnectedNeighbours ) { this.connectedNeighbours = ConnectedNeighbours ; }
+	public Double getWattsBeta() { return wattsBeta; }
+	public void setWattsBeta(double WattsBeta) { this.wattsBeta = WattsBeta; }
 	public String getRiskManagerBehavior() { return riskManagerBehavior; }
 	public void setRiskManagerBehavior(String riskManagerBehavior) { this.riskManagerBehavior = riskManagerBehavior; }
 	public String getMediaBehavior() { return mediaBehavior; }
@@ -92,14 +96,15 @@ public class Saar extends SimState
 	 * @param NumCitizens
 	 * @param EventMemory
 	 */
-	public Saar(long seed, String NetworkType, String OpinionDynamic, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory, Double Confidence, String LogFile, int Verbosity) {
+	public Saar(long seed, Double WattsBeta, int ConnectedNeighbours, String OpinionDynamic, Double ObjectiveFirstRisk, int NumCitizens, int EventMemory, Double Confidence, String LogFile, int Verbosity) {
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
 		friends = new Network(false);
 		objectiveRisks = new DoubleBag();
 		
-		networkType = NetworkType;
+		wattsBeta = WattsBeta;
+		connectedNeighbours = ConnectedNeighbours;
 		opinionDynamic = OpinionDynamic;
 		objectiveRisks.add(0);
 		objectiveRisks.add(ObjectiveFirstRisk);
@@ -118,14 +123,15 @@ public class Saar extends SimState
 		friends = new Network(false);
 		objectiveRisks = new DoubleBag();
 		
-		networkType = config.networkType;
+		wattsBeta = config.wattsBeta;
+		connectedNeighbours = config.connectedNeighbours;
 		opinionDynamic = config.opinionDynamic;
 		objectiveRisks.add(0);
 		objectiveRisks.add(config.objectiveRisk);
 		numCitizens = config.numCitizens;
 		eventMemory = config.eventMemory;
 		primaryRiskType = config.primaryRiskType;
-		confidence = config.confidence;
+		//confidence = config.confidence;
 		logFile = config.logFile;
 		verbosity = config.verbosity;
 	}
@@ -235,21 +241,8 @@ public class Saar extends SimState
 			
 		}
 		
-		// create edges in social network
-		switch ( networkType ) 
-		{
-			case "Lattice":
-				createNetworkLattice();
-				break;
-			case "WattsBeta":
-				createNetworkWattsStrogatz(8, 0.25);
-				break;
-			default:
-				System.out.println("None !!!");
-				System.out.println("*** Warning: no social network has been set up.");
-				break;
-				
-		}		
+		// create social network
+		createNetwork();		
 		
 		// add medium
 		medium = new Medium(-1, this, Medium.OBJECTIVE);
@@ -275,22 +268,67 @@ public class Saar extends SimState
 	}
 	
 	/**
-	 * @param networkType
+	 * 
 	 */
-	
-	public void createNetworkLattice()
+	public void createNetwork()
 	{
-		census.log("Creating Social Network: Lattice");
+		// connect neighbours
+		census.log("Creating Social Network, connected neighbours: " + connectedNeighbours );
 
-		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected 
-
-		for(int i = citizens.size() - 1 ; i > 0 ; i--)
+		try {
+			Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected 
+			int sideConnections = connectedNeighbours / 2;
+			int i = sideConnections;
+			Object currentCitizen = citizens.get(i);
+			Object leftCitizen;
+			Object rightCitizen;
+			for( ; i < ( citizens.size() - sideConnections -1)  ; i++)
+			{
+				for ( int n = 1 ; n <= sideConnections ; n++ ) 
+				{
+					leftCitizen = citizens.get(i-n);
+					rightCitizen = citizens.get(i+n);
+					friends.addEdge(currentCitizen,leftCitizen,1.0);
+					friends.addEdge(currentCitizen,rightCitizen,1.0);
+				}
+			}
+			// handle last nodes
+			for ( ; i < citizens.size() ; i++)
+			{
+				for ( int n = 1 ; n <= sideConnections ; n++ ) 
+				{
+					leftCitizen = citizens.get(i-n);
+					friends.addEdge(currentCitizen,leftCitizen,1.0);
+					if ( (i+n) < citizens.size() )
+					{
+						rightCitizen = citizens.get(i+n);
+						friends.addEdge(currentCitizen,rightCitizen,1.0);
+					}
+				}
+			}
+			
+			// rewire with probability beta
+			 if ( wattsBeta > 0.0 )
+			{
+				census.log("Rewiring network, beta: " + wattsBeta );
+				/* if ( random.nextDouble() < wattsBeta ) 
+				{
+					do {
+						int tmp = randomGenerator.nextInt(numCitizens);
+						acquaintance = citizens.get(tmp);
+					}
+					while ( citizen == acquaintance || neighbour == acquaintance || friends.getEdge(citizen, acquaintance) != null );
+						
+					friends.addEdge(citizen,acquaintance,1.0);
+				} */
+			}
+		}
+		catch (Exception e)
 		{
-			Object citizen1 = citizens.get(i);
-			Object citizen2 = citizens.get(i-1);
-			friends.addEdge(citizen1, citizen2, 1.0);
+			// TOCO: handle exception
 		}
 	}
+	
 	
 	/**
 	 * @param degree
