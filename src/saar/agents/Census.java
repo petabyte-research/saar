@@ -107,7 +107,8 @@ public class Census implements Steppable
 		Saar model = (Saar) state;
 			
 		// calculate average risk perception and its standard deviation (wellford algorithm)
-		Bag citizens = new Bag(model.getFriends().getAllNodes()); // TODO: check whether this is needed
+		Collection citizens = model.getFriends().getVertices();
+		Citizen zero = (Citizen) model.getAgent(0);
 		int numberOfCitizens = citizens.size();
 		Double value;
 		Double mCurrent;
@@ -117,15 +118,15 @@ public class Census implements Steppable
 		try {
 			for (int n = 0; n < numberOfRisks ; n++) {
 				// initialize
-				meanRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
-				maximumRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
-				minimumRiskPerception.setValue(n, ((Citizen) citizens.get(0)).getRiskPerception(n));
+				meanRiskPerception.setValue(n, zero.getRiskPerception(n));
+				maximumRiskPerception.setValue(n, zero.getRiskPerception(n));
+				minimumRiskPerception.setValue(n, zero.getRiskPerception(n));
 				mPrevious = meanRiskPerception.get(n);
 				mCurrent = 0.0;
 				sD = 0.0;
 				// get data from all citizens
-				for(int i = 1 ; i < numberOfCitizens ; i++) {
-					value = ((Citizen) citizens.get(i)).getRiskPerception(n);
+				for( Iterator iter = citizens.iterator(); iter.hasNext() ; ) {
+					value = ( (Citizen) iter.next() ).getRiskPerception(n);
 					
 					// get min and max if applicable
 					if (minimumRiskPerception.get(n) > value )
@@ -137,7 +138,7 @@ public class Census implements Steppable
 				
 					// get values for mean and stdev calculation
 					meanRiskPerception.setValue(n, meanRiskPerception.get(n) + value);
-					mCurrent = mPrevious + ( value - mPrevious ) / i;
+					mCurrent = mPrevious + ( value - mPrevious ) / numberOfCitizens;
 					sD =  sD + ( value - mPrevious ) * ( value - mCurrent );
 					mPrevious = mCurrent;
 				}

@@ -6,6 +6,8 @@ package saar.agents;
  */
 
 
+import java.util.Collection;
+import java.util.Iterator;
 import sim.engine.*;
 import sim.field.network.*;
 import sim.util.*;
@@ -300,10 +302,10 @@ public class Citizen extends Agent  {
 	{
 		Message rpRequest = new Message(this,"rprequest");
 		
-		// add neighbours to receivers of gossip query
-		Bag neighbours = model.getFriends().getEdgesOut(this);
-		for (int i = 0 ; i < neighbours.size(); i++ ) 
-			rpRequest.addReceiver( (Citizen) ((Edge) neighbours.get(i)).getOtherNode(this));
+		Collection neighbours =  model.getFriends().getNeighbors(this);
+		Iterator iter = neighbours.iterator();
+		while ( iter.hasNext() )
+			rpRequest.addReceiver( (Citizen) iter.next() );
 		
 		// send gossip query directly (no need to use outgoing queue here) 
 		sendMessage(rpRequest);

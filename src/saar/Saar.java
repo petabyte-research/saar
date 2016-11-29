@@ -14,8 +14,10 @@ import sim.field.continuous.*;
 import sim.field.network.*;
 import saar.agents.*;
 import saar.ui.*;
-import saar.*;
 import com.beust.jcommander.*;
+import java.util.Collection;
+import java.util.Iterator;
+import edu.uci.ics.jung.graph.*;
 
 public class Saar extends SimState
 {
@@ -47,7 +49,8 @@ public class Saar extends SimState
 	// model properties
 	private Continuous2D area ; 
 	public ec.util.MersenneTwisterFast randomGenerator;
-	private Network friends;
+	private SparseMultigraph<Agent, Connection> friendsNetwork;
+	private SparseMultigraph<Agent, Connection> mediaNetwork;
 	private Census census;
 	private Medium medium;
 	
@@ -66,7 +69,7 @@ public class Saar extends SimState
 	private int verbosity;
 		
 	public Continuous2D getArea() { return area;} 
-	public Network getFriends() { return friends;}
+	public SparseMultigraph<Agent, Connection> getFriends() { return friendsNetwork;}
 	public Census getCensus() { return census; }
 	public Medium getMedium() { return medium;}
 	
@@ -100,7 +103,8 @@ public class Saar extends SimState
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
-		friends = new Network(false);
+		friendsNetwork = new SparseMultigraph<Agent, Connection>();
+		mediaNetwork = new SparseMultigraph<Agent, Connection>();
 		objectiveRisks = new DoubleBag();
 		
 		wattsBeta = WattsBeta;
@@ -120,7 +124,8 @@ public class Saar extends SimState
 		super(seed);
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
-		friends = new Network(false);
+		friendsNetwork = new SparseMultigraph<Agent, Connection>();
+		mediaNetwork = new SparseMultigraph<Agent, Connection>();
 		objectiveRisks = new DoubleBag();
 		
 		wattsBeta = config.wattsBeta;
@@ -193,6 +198,12 @@ public class Saar extends SimState
 		if (verbosity > 0)
 			census.setConsoleLogging(true);
 		
+		// place census object visible in gui
+		area.setObjectLocation(census, new Double2D(50, 4));
+					
+		census.log("Event Memory: " + eventMemory + " ");
+		census.log("Objective Risk: " + objectiveRisks.getValue(0) + " ");
+		
 		// add citizens
 		census.log("Creating agents: " + numCitizens);
 		census.log("Using opinion dynamic: " + opinionDynamic );
@@ -236,7 +247,7 @@ public class Saar extends SimState
 			area.setObjectLocation(citizen, new Double2D(xPos, yPos));	
 			
 			// add citizen to social network and schedule 
-			friends.addNode(citizen);
+			friendsNetwork.addVertex(citizen);
 			schedule.scheduleRepeating(citizen);
 			
 		}
@@ -247,14 +258,10 @@ public class Saar extends SimState
 		// add medium
 		medium = new Medium(-1, this, Medium.OBJECTIVE);
 		area.setObjectLocation(medium,new Double2D(5,4));
+		mediaNetwork.addVertex(medium);
 		schedule.scheduleRepeating(medium);
 		
-		// place census object visible in gui
-		area.setObjectLocation(census, new Double2D(50, 4));
 		
-	
-		census.log("Event Memory: " + eventMemory + " ");
-		census.log("Objective Risk: " + objectiveRisks.getValue(0) + " ");
 	
 	}
 	
@@ -275,15 +282,17 @@ public class Saar extends SimState
 		// connect neighbours
 		census.log("Creating Social Network, connected neighbours: " + connectedNeighbours );
 
+		/*
 		try {
 			Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected 
 			int sideConnections = connectedNeighbours / 2;
 			int i = sideConnections;
-			Object currentCitizen = citizens.get(i);
+			Object currentCitizen;
 			Object leftCitizen;
 			Object rightCitizen;
 			for( ; i < ( citizens.size() - sideConnections -1)  ; i++)
 			{
+				currentCitizen = citizens.get(i);
 				for ( int n = 1 ; n <= sideConnections ; n++ ) 
 				{
 					leftCitizen = citizens.get(i-n);
@@ -292,9 +301,11 @@ public class Saar extends SimState
 					friends.addEdge(currentCitizen,rightCitizen,1.0);
 				}
 			}
+			
 			// handle last nodes
 			for ( ; i < citizens.size() ; i++)
 			{
+				currentCitizen = citizens.get(i);
 				for ( int n = 1 ; n <= sideConnections ; n++ ) 
 				{
 					leftCitizen = citizens.get(i-n);
@@ -310,8 +321,7 @@ public class Saar extends SimState
 			// rewire with probability beta
 			 if ( wattsBeta > 0.0 )
 			{
-				census.log("Rewiring network, beta: " + wattsBeta );
-				/* if ( random.nextDouble() < wattsBeta ) 
+				 if ( random.nextDouble() < wattsBeta ) 
 				{
 					do {
 						int tmp = randomGenerator.nextInt(numCitizens);
@@ -320,13 +330,13 @@ public class Saar extends SimState
 					while ( citizen == acquaintance || neighbour == acquaintance || friends.getEdge(citizen, acquaintance) != null );
 						
 					friends.addEdge(citizen,acquaintance,1.0);
-				} */
+				} 
 			}
 		}
 		catch (Exception e)
 		{
 			// TOCO: handle exception
-		}
+		}*/
 	}
 	
 	
@@ -337,7 +347,7 @@ public class Saar extends SimState
 	
 	public void createNetworkWattsStrogatz(int degree, double beta) 
 	{
-		census.log("Creating Social Network: Watts beta");
+		/* census.log("Creating Social Network: Watts beta");
 		
 		Bag citizens = new Bag(friends.getAllNodes()); // create copy to be sure the Bag doesn't change or gets garbage collected
 		Bag neighbours = new Bag();
@@ -376,7 +386,7 @@ public class Saar extends SimState
 						friends.addEdge(citizen,neighbour,1.0);
 				}
 			}
-		}
+		}*/
 
 	}
 	
@@ -397,12 +407,15 @@ public class Saar extends SimState
 	{
 		// TODO: for speed, maybe create a separate map to look up agents by ID
 
-		Bag individuals = friends.getAllNodes();
-		for ( int i = 1; i < individuals.size() ; i++ )
+		Collection individuals = friendsNetwork.getVertices();
+		Citizen tmpCitizen;
+		for  ( Iterator iter = individuals.iterator(); iter.hasNext(); ) 
 		{
-			if ( ((Citizen) individuals.get(i)).getAgentID() == ID )
-				return individuals.get(i);
+			tmpCitizen = (Citizen) iter.next();
+			if ( tmpCitizen.getAgentID() == ID ) 
+				return tmpCitizen;
 		}
+		
 		return null;
 	}
 	

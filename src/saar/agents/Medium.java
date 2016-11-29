@@ -141,8 +141,9 @@ public class Medium extends Agent {
 		}
 		
 		broadcastMessage.setContent(rpResponseContent);
-		broadcastMessage.setReceivers(  new Bag(model.getFriends().getAllNodes()) );
-		sendMessage(broadcastMessage);
+		// TODO: use JUNG to broadcast message over medianetwork
+		/* broadcastMessage.setReceivers(  new Bag(model.getFriends().getAllNodes()) );
+		sendMessage(broadcastMessage);*/
 	}
 	
 }

@@ -12,6 +12,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.border.LineBorder;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import saar.agents.Citizen;
 import sim.field.network.Edge;
 import sim.util.Bag;
@@ -28,7 +31,7 @@ public class CitizenDisplay extends JButton {
 	
 	private Citizen P;
 	private float brightness = 1.0f;
-	private Bag friends;
+	private Collection friends;
 	private Double RP = 1.0;
 	private Double RPavgFriends = 1.0;
 	private String flow = CitizenDisplay.UP;
@@ -47,7 +50,7 @@ public class CitizenDisplay extends JButton {
 		P = parent;		
 		this.setFont(new Font("Sans Serif", Font.PLAIN, 8));
 		
-		friends = P.getModel().getFriends().getEdgesOut(P);
+		friends = P.getModel().getFriends().getVertices();
 	}
 	
 	public void paintComponent(Graphics g) 
@@ -93,9 +96,11 @@ public class CitizenDisplay extends JButton {
 	{
 		double avgFRP = 0.0;
 		double ups = 0.0;
-		for (int i = 0 ; i < friends.size(); i++ )
+		
+		Iterator iter = friends.iterator();
+		while (iter.hasNext() )  
 		{
-			Citizen friend = (Citizen) ((Edge) friends.get(i)).getOtherNode(P);
+			Citizen friend = (Citizen) iter.next();
 			avgFRP += friend.getRiskPercentage();
 			
 			if(friend.getDisplay() != null)
@@ -117,10 +122,12 @@ public class CitizenDisplay extends JButton {
 	{
 		float newB = 1.0f;
 		if(flag) newB = 0.5f;
-		for (int i = 0 ; i < friends.size(); i++ )
+		Iterator iter = friends.iterator();
+		while (iter.hasNext() )  
 		{
-			Citizen friend = (Citizen) ((Edge) friends.get(i)).getOtherNode(P);
-			if(friend.getDisplay() != null) friend.getDisplay().brightness = newB;
+			Citizen friend = (Citizen) iter.next();
+			if( friend.getDisplay() != null ) 
+				friend.getDisplay().brightness = newB;
 		}
 	}
 	

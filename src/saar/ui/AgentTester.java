@@ -17,8 +17,7 @@ import saar.agents.*;
  *
  */
 public class AgentTester extends MasonGUI {
-	
-	// TODO: rewrite class to use new display code 
+	 
 
 	/**
 	 * @param commandLineArgs
@@ -47,11 +46,11 @@ public class AgentTester extends MasonGUI {
 		new JCommander(commandLineArgs,args);
 		
 		// change parameters to suit testing
-		commandLineArgs.numCitizens = 6;
+		commandLineArgs.numCitizens = 4;
 		commandLineArgs.objectiveRisk = 0.3;
 		commandLineArgs.verbosity = 1;
-		commandLineArgs.connectedNeighbours = 2;
-		commandLineArgs.wattsBeta = 0.0;
+		commandLineArgs.connectedNeighbours = 4;
+		commandLineArgs.wattsBeta = 0.25;
 		
 		// create model and gui
 		AgentTester vid = new AgentTester(commandLineArgs);
@@ -67,12 +66,10 @@ public class AgentTester extends MasonGUI {
 	public void init(Controller c)
 	{
 		super.init(c);
-		//display.attach( buddiesPortrayal, "Buddies" );
+
 	}
 	
-	/**
-	 * 
-	 */
+	/* 
 	public void setupPortrayals()
 	{
 		super.setupPortrayals();
@@ -95,6 +92,6 @@ public class AgentTester extends MasonGUI {
 			
 		}
 		
-	}
+	}*/
 
 }
