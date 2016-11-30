@@ -2,7 +2,7 @@ package saar.agents;
 
 import saar.Saar;
 
-public class Governor extends Agent {
+public class Governor extends Person {
 	
 	protected static final long serialVersionUID = 1L;
 

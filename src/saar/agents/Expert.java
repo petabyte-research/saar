@@ -9,7 +9,7 @@ import saar.Saar;
  * @author QuispelL
  *
  */
-public class Expert extends Agent {
+public class Expert extends Person {
 
 	protected static final long serialVersionUID = 1L;
 	

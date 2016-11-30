@@ -4,6 +4,7 @@
 package saar.agents;
 
 import saar.*;
+import saar.memes.Message;
 import sim.engine.SimState;
 import sim.util.Bag;
 import sim.util.DoubleBag;
@@ -12,7 +13,7 @@ import sim.util.DoubleBag;
  * @author QuispelL
  *
  */
-public class Medium extends Agent {
+public class Medium extends Person {
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

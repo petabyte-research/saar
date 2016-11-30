@@ -12,9 +12,12 @@ import sim.engine.*;
 import sim.field.network.*;
 import sim.util.*;
 import saar.*;
+import saar.memes.DecisionRule;
+import saar.memes.Message;
+import saar.memes.RiskSignal;
 import saar.ui.*;
 
-public class Citizen extends Agent  {
+public class Citizen extends Person  {
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -77,7 +80,6 @@ public class Citizen extends Agent  {
 	{
 		super(id, Model);
 		initCitizen(OpinionDynamic, Confidence,1);
-		riskPerceptions.add(0.0);
 		riskPerceptions.add(initialFirstRP);
 	}
 	
@@ -110,6 +112,7 @@ public class Citizen extends Agent  {
 		if ( opinionDynamic == DEGROOT )
 			Confidence = 1.0;   // Bounded Confidence Model with unlimited confidence interval (1.0 = max risk) is De Groot Model
 		for ( int i = 0 ; i < (NumberOfRisks + 1) ; i++ ) {
+			riskPerceptions.add(0.0);
 			rpTotals.add(1);
 			confidenceIntervalVector.add(Confidence);
 		}

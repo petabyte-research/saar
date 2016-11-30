@@ -1,185 +1,61 @@
 package saar.agents;
 
-import saar.Message;
 import saar.Saar;
-import saar.DecisionRule;
+import saar.memes.DecisionRule;
+import saar.memes.Message;
 import sim.engine.SimState;
-import sim.engine.Steppable;
-import sim.util.*;
+import sim.util.Bag;
+import sim.util.DoubleBag;
 
-public class Agent implements Steppable {
+public interface Agent {
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Properties and constructors
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	DoubleBag getRiskPerceptions();
 
-	
-	protected static final long serialVersionUID = 1L;
-	
-	protected int agentID;
-	protected Saar model;
-	protected Bag incomingQueue;
-	protected Bag outgoingQueue;
-	protected DoubleBag riskPerceptions;
-	protected Bag decisionRules;
-	private double primaryRiskPerception; // dummy to allow for property inspectors and interval. Real Primary Risk stored riskPerceptions at index saar.getPrimaryRiskType
+	void setRiskPerceptions(double newRP);
 
-	public DoubleBag getRiskPerceptions() {return riskPerceptions;}
-	public void setRiskPerceptions( double newRP ) { riskPerceptions.set(0, newRP ) ; }
-	public int getAgentID() {return agentID;}
-	public Saar getModel() { return model ; } 
-	public Bag getIncomingQueue() { return incomingQueue;}
-	public Bag getOutgoingQueue() {return outgoingQueue;}
-	public double getPrimaryRiskPerception()  { return riskPerceptions.get( model.getPrimaryRiskType() ); } 
-	public void setPrimaryRiskPerception( double newRP ) { riskPerceptions.set(model.getPrimaryRiskType(),newRP); }
-	public Object domPrimaryRiskPerception() { return new sim.util.Interval(0.0000001,1.0)  ; } 
-	
+	int getAgentID();
+
+	Saar getModel();
+
+	Bag getIncomingQueue();
+
+	Bag getOutgoingQueue();
+
+	double getPrimaryRiskPerception();
+
+	void setPrimaryRiskPerception(double newRP);
+
+	Object domPrimaryRiskPerception();
+
 	/**
 	 * 
 	 * @param riskType
 	 * @return
 	 */
-	public double getRiskPerception(int riskType)
-	{
-		try { 
-			return riskPerceptions.get(riskType);
-		}
-		catch ( Exception e )
-		{
-			// TODO: handle this better
-			return 0.0;
-		}
-		
-	}
-	
-	/**
-	 * 
-	 * @param iD
-	 */
-	public Agent(int iD, Saar Model) {
-		super();
-		model = Model;
-		initAgent(iD);
-	}
-	
-	/**
-	 * 
-	 */
-	public void initAgent(int iD)
-	{
-		agentID = iD;
-		incomingQueue = new Bag();
-		outgoingQueue = new Bag(); 
-		riskPerceptions = new DoubleBag();
-		decisionRules = new Bag();
-	}
-	
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Behavior  
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	double getRiskPerception(int riskType);
 
+	/**
+	 * 
+	 */
+	void initAgent(int iD);
 
 	/**
 	 * 
 	 *  * @param state
 	 */
-	@Override public void step(SimState state) {
-		// TODO: why get state here and not in constructor ?
-		model = (Saar) state;
-	}
-	
+	void step(SimState state);
+
 	/**
 	 * 
 	 * @param message
 	 */
-	protected void processMessage(Message message)
-	{
-		System.out.println(message.getPerformative() );
-	}
-	
-		
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Communication 
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * 
-	 */
-	protected void processMessages()
-	{
-		while ( ! incomingQueue.isEmpty())
-			processMessage((Message) incomingQueue.pop());
-	}
-	
-	/**
-	 * 
-	 */
-	protected void sendMessages() {
-		
-		try {
-			while ( ! outgoingQueue.isEmpty())
-				sendMessage(  (Message) outgoingQueue.pop());
-		}
-		catch ( Exception e) {
-			System.out.println(e);
-		}
-	}
-			
-	
-	/**
-	 * 
-	 * @param message
-	 */
-	protected void sendMessage(Message message) {
+	void receiveMessage(Message message);
 
-		try {
-			Bag receivers = message.getReceivers();
-			for ( int i = 0 ; i < receivers.size() ; i++)
-				((Citizen) receivers.get(i)).receiveMessage(message);
-		}
-		catch (Exception e) {
-			System.out.println(e);
-		}
-	}
-	
-	/**
-	 * 
-	 * @param message
-	 */
-	public void receiveMessage(Message message) {
-
-		try {
-			incomingQueue.add(message);
-		}
-		catch (Exception e) {
-			System.out.println(e);
-		}
-	}
-	
 	/**
 	 * 
 	 */
-	public void emptyIncomingQueue()
-	{
-		incomingQueue.clear();
-	}
+	void emptyIncomingQueue();
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//Auxiliary
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void addRule(DecisionRule Rule)
-	{
-		decisionRules.add(Rule);
-	}
-	
+	void addRule(DecisionRule Rule);
 
 }
