@@ -1,7 +1,7 @@
 /**
  * 
  */
-package saar;
+package saar.memes;
 
 import saar.agents.Agent;
 import sim.util.*;

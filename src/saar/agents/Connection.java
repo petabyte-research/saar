@@ -1,7 +1,7 @@
 /**
  * 
  */
-package saar;
+package saar.agents;
 
 /**
  * @author QuispelL

@@ -1,8 +1,9 @@
-package saar;
+package saar.memes;
 
-import saar.agents.Agent;
 import sim.util.*;
 import java.lang.reflect.*;
+
+import saar.agents.Agent;
 
 /**
  * @author QuispelL
