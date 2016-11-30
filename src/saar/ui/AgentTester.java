@@ -46,7 +46,7 @@ public class AgentTester extends MasonGUI {
 		new JCommander(commandLineArgs,args);
 		
 		// change parameters to suit testing
-		commandLineArgs.numCitizens = 4;
+		commandLineArgs.numCitizens = 16;
 		commandLineArgs.objectiveRisk = 0.3;
 		commandLineArgs.verbosity = 1;
 		commandLineArgs.connectedNeighbours = 4;

@@ -32,8 +32,8 @@ public class CommandLineArgs {
 	@Parameter(names = { "-p", "-primaryRiskType" }, description = "Risk type used for statistics and display ")
 	public int primaryRiskType = 1;  // 0 is not used for risk perception calculations
 	
-	/*@Parameter(names = { "-c", "-confidenceInterval" }, description = "Confidence Interval used for Bounded Confidence algorithm")
-	public Double confidence = 0.1;  // only used with HEGSELMAN opinion dynamic*/
+	@Parameter(names = { "-r", "-confidence" }, description = "Confidence Interval used for Bounded Confidence algorithm")
+	public Double confidence = 1.0;  
 	
 	@Parameter(names = { "-l", "-logfile" }, description = "Start word/characters for log file. When omitted, no log file will be used.")
 	public String logFile = ""; // default is to not use a log file

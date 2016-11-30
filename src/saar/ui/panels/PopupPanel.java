@@ -124,7 +124,7 @@ public class PopupPanel extends JPanel {
 	{
 		if(dataExtract != null)
 		{
-			graphDesc.setText("<html><body><font color='#00ff00'>green</font>: Agent RP%<br/><font color='#ff0000'>red</font>: Avg RP% friends</body></html>");
+			graphDesc.setText("<html><body><font color='#00ff00'>green</font>: Person RP%<br/><font color='#ff0000'>red</font>: Avg RP% friends</body></html>");
 			info.setText("<html><body><div style='text-align: center;'>Risk perception: "+Math.round(dataExtract.getRiskPercentage()*10000)/100+"%<br/>Risk flow: "+dataExtract.getFlow()+"<br/><br/>"+dataExtract.friendInformation()+"<br/><br/><br/><br/><br/><br/>change Citizen<br/>Opinion Dynamic:</div></body></html>");
 			Double[] RP = new Double[2];
 			RP[1] = dataExtract.getRiskPercentage();
