@@ -7,16 +7,8 @@ package saar.agents;
  * @author QuispelL
  *
  */
-public class Connection {
+public class Connection implements Link {
 	
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//Static constants
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public static final int UNDIRECTED = 0;
-	public static final int DIRECTED = 1;
 		
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -24,21 +16,46 @@ public class Connection {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	private int id;
 	private int type;
 	private double weight;
 	
+	/* (non-Javadoc)
+	 * @see saar.agents.Link#getType()
+	 */
+	@Override
 	public int getType() { return type ; }
+	
+	
+	/* (non-Javadoc)
+	 * @see saar.agents.Link#getID()
+	 */
+	@Override
+	public int getID() { return id ; }
+	
+	
+	/* (non-Javadoc)
+	 * @see saar.agents.Link#getWeight()
+	 */
+	@Override
 	public double getWeight() { return weight ; }
+	
+	
+	/* (non-Javadoc)
+	 * @see saar.agents.Link#setWeight(double)
+	 */
+	
+	@Override
 	public void setWeight( double Weight ) { weight = Weight ; } 
 	
 	/**
 	 * 
 	 */
-	public Connection(int ConnectionType, double ConnectionWeight ) {
-		
+	public Connection(int ID, int ConnectionType)
+	{
+		id = ID;
 		type = ConnectionType;
-		weight = ConnectionWeight;
-		
+		weight = 0.0;
 	}
 
 }

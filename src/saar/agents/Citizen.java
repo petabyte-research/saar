@@ -195,8 +195,6 @@ public class Citizen extends Person  {
 				Message rpResponse = new Message(this,"rpresponse");
 				rpResponse.addReceiver( message.getSender() );
 				Bag rpResponseContent = new Bag();
-				Bag sentiment = new Bag();
-				rpResponseContent.add(sentiment);
 				for ( int i = Saar.FLOOD ; i < riskPerceptions.size() ; i++)
 					rpResponseContent.add(riskPerceptions.get(i));
 				rpResponse.setContent(rpResponseContent);
@@ -205,9 +203,10 @@ public class Citizen extends Person  {
 			case "rpresponse":
 			case "riskbroadcast":
 				// broadcast or response to risk perception query received; store information in risk signal queue
-				for ( int i = Saar.FLOOD ; i < message.getContent().size() ; i++ )
-					riskSignalQueue.add(new RiskSignal(message.getSender().getAgentID(),i,(double) message.getContent().get(i), (Bag ) message.getContent().get(0)  ));
-				// TODO: add code to spread risk signal
+				for ( int i = Saar.FLOOD ; i < message.getContent().size() ; i++ ) {
+					RiskSignal tmpSignal = new RiskSignal( message.getSender().getAgentID(), i , (Double) message.getContent().get(i)  );
+					riskSignalQueue.add(tmpSignal);
+				}
 				break;
 			default:
 				// TODO: handle unknown performative
@@ -244,11 +243,11 @@ public class Citizen extends Person  {
 			for ( int i = 0 ; i < riskSignalQueueSize ; i++) {
 				riskSignal = (RiskSignal) riskSignalQueue.get(i);
 				riskType = riskSignal.getRiskType();
-				// check whether opinion is within confidence interval
+				/* check whether opinion is within confidence interval
 				if ( Math.abs( riskPerceptions.get(riskType) - riskSignal.getRisk())  < confidenceIntervalVector.get(riskType) ) {
 					riskPerceptions.setValue(riskSignal.getRiskType(), riskPerceptions.get(riskSignal.getRiskType()) + riskSignal.getRisk());
 					rpTotals.setValue(riskSignal.getRiskType(), rpTotals.get(riskSignal.getRiskType()) + 1) ;
-				}
+				}*/
 			}
 			// calculate average of risk perceptions (only needed if risk signal size > 0) 
 			for ( int i = 0 ; i < rpTotals.size() ; i++)

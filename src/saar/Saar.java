@@ -16,13 +16,19 @@ import saar.agents.*;
 import saar.memes.DecisionRule;
 import saar.ui.*;
 import com.beust.jcommander.*;
+import com.google.common.base.Supplier;
 import java.util.Collection;
 import java.util.Iterator;
 import edu.uci.ics.jung.graph.*;
-//import edu.uci.ics.jung.
+import edu.uci.ics.jung.algorithms.generators.*;
+
 
 public class Saar extends SimState
 {
+	//protected Supplier<UndirectedGraph<String,Number>> undirectedGraphFactory;
+    protected Supplier<DirectedGraph<Agent,Link>> directedGraphFactory;
+	protected Supplier<Agent> vertexFactory;
+	protected Supplier<Link> edgeFactory;
 	
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,12 +56,11 @@ public class Saar extends SimState
 	// model properties
 	private Continuous2D area ; 
 	public ec.util.MersenneTwisterFast randomGenerator;
-	private SparseMultigraph<Person, Connection> friendsNetwork;
-	private SparseMultigraph<Person, Connection> mediaNetwork;
+	private Graph<Agent,Link> friendsNetwork;
+	private Graph<Agent, Link> mediaNetwork;
 	private Census census;
 	private Medium medium;
-	private AgentFactory agentFactory; 
-	
+
 	// configuration properties
 	private int numCitizens;
 	private int primaryRiskType;
@@ -72,7 +77,7 @@ public class Saar extends SimState
 	private int agentType;
 		
 	public Continuous2D getArea() { return area;} 
-	public SparseMultigraph<Person, Connection> getFriends() { return friendsNetwork;}
+	public Graph<Agent, Link> getFriends() { return friendsNetwork;}
 	public Census getCensus() { return census; }
 	public Medium getMedium() { return medium;}
 	
@@ -147,13 +152,37 @@ public class Saar extends SimState
 	
 	protected void init()
 	{
-		agentFactory = new AgentFactory(this);
-		
+	
 		area = new Continuous2D(1.0,100,100);
 		randomGenerator = new MersenneTwisterFast();
-		friendsNetwork = new SparseMultigraph<Person, Connection>();
-		mediaNetwork = new SparseMultigraph<Person, Connection>();
 		objectiveRisks = new DoubleBag();
+		
+		directedGraphFactory = new Supplier<DirectedGraph<Agent,Link>>() 
+		{
+            public DirectedGraph<Agent,Link> get() { return new DirectedSparseMultigraph<Agent,Link>();}
+        };
+        
+        Saar model = this;
+		vertexFactory = new Supplier<Agent>() 
+		{
+			int count; 
+			Citizen citizen;
+			DecisionRule tmpRule;
+			public Citizen get() 
+				{ 
+					citizen = new Citizen(count++,model,agentType,0.1,confidence);
+					schedule.scheduleRepeating(citizen);
+					tmpRule = new DecisionRule(citizen,Saar.FLOOD,0.2,"evacuate");
+					citizen.addRule(tmpRule);
+					return citizen;
+				} // TODO: how to initialize initial risk perception and decision rules ?
+		};
+		
+		edgeFactory = new Supplier<Link>() 
+		{
+			int count;
+			public Connection get() { return new Connection(count++,Connection.DIRECTED);}
+		};
 				
 	}
 	
@@ -211,9 +240,10 @@ public class Saar extends SimState
 		if ( !logFile.isEmpty() ) 
 			census.initializeLogFile(logFile);
 		schedule.scheduleRepeating(census);
-		if (verbosity > 0)
-			census.setConsoleLogging(true);
-		
+		/* if (verbosity != 0) 
+			census.setConsoleLogging(true); */
+		// TODO: find out why this does not work
+	
 		// place census object visible in gui
 		area.setObjectLocation(census, new Double2D(50, 4));
 					
@@ -239,21 +269,17 @@ public class Saar extends SimState
 				agentType = 0; 
 				break;
 		}
+		
 		int xPos = 1;
 		int yPos = 10;
 		Double initialRisk = 0.0;
 		Double lowerRiskBound = objectiveRisks.get(0) * 0.95;
 		Double riskInterval = objectiveRisks.get(0) * 0.1;
-		Citizen citizen;
 		for(int i = 0; i < numCitizens; i++)
 		{
 			initialRisk = lowerRiskBound + randomGenerator.nextDouble() * riskInterval; 
-			citizen = agentFactory.getCitizen(i);
-			
 			
 			// give citizen rules
-			DecisionRule tmpRule = new DecisionRule(citizen,Saar.FLOOD,0.2,"evacuate");
-			citizen.addRule(tmpRule);
 			
 			// spread citizens over the area
 			if ( xPos < 100 ) 
@@ -262,11 +288,10 @@ public class Saar extends SimState
 				xPos = 0;
 				yPos = yPos + 2;
 			}
-			area.setObjectLocation(citizen, new Double2D(xPos, yPos));	
+			//area.setObjectLocation(citizen, new Double2D(xPos, yPos));	
 			
 			// add citizen to social network and schedule 
-			friendsNetwork.addVertex(citizen);
-			schedule.scheduleRepeating(citizen);
+			//schedule.scheduleRepeating(citizen);*/
 			
 		}
 		
@@ -276,11 +301,9 @@ public class Saar extends SimState
 		// add medium
 		medium = new Medium(-1, this, Medium.OBJECTIVE);
 		area.setObjectLocation(medium,new Double2D(5,4));
-		mediaNetwork.addVertex(medium);
+		//mediaNetwork.addVertex(medium);
 		schedule.scheduleRepeating(medium);
 		
-		
-	
 	}
 	
 	/**
@@ -299,12 +322,12 @@ public class Saar extends SimState
 	{
 		// connect neighbours
 		census.log("Creating Social Network. Type: " + networkType + ", connected neighbours: " + connectedNeighbours + ", beta: " + beta );
-		
+			
 		try {
-		/*	GraphGenerator generator ;//= new GraphGenerator
+			GraphGenerator<Agent,Link> generator ;
 			switch ( networkType )  {
 				case "BarabasiAlbert":
-					
+			 
 					break;
 				case "EppsteinPowerLaw":
 					
@@ -317,14 +340,15 @@ public class Saar extends SimState
 					break;
 				case "Lattice2d":
 				default:
-					// when no networktype is give, generate lattice2d network
-					
+					// when no networktype is given, generate lattice2d network
+					generator = new Lattice2DGenerator<Agent,Link>(directedGraphFactory,vertexFactory,edgeFactory,numCitizens/2,false); 
+					friendsNetwork = generator.get();
 					break;
-			}*/
+			}
 		}
 		catch (Exception e)
 		{
-			// TOCO: handle exception
+			// TODO: handle exception
 		}
 	}
 
@@ -374,5 +398,7 @@ public class Saar extends SimState
 		}
 		
 	}
+	
+	
 	
 }
